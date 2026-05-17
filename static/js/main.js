@@ -3,6 +3,25 @@
    Three.js particles · Magnetic cursor · Typewriter · Reveal
 ═══════════════════════════════════════════════════════════ */
 
+/* ── THEME SWITCHER ──────────────────────────────────────── */
+(function initTheme() {
+  const saved = localStorage.getItem('pk-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.body.setAttribute('data-theme', saved);
+
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    if (btn.dataset.theme === saved) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      const theme = btn.dataset.theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.body.setAttribute('data-theme', theme);
+      localStorage.setItem('pk-theme', theme);
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+})();
+
 /* ── THREE.JS PARTICLE FIELD ─────────────────────────────── */
 (function initThree() {
   const canvas = document.getElementById('threeCanvas');
