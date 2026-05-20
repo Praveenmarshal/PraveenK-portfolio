@@ -303,20 +303,6 @@ function processScroll() {
     }
   }
 
-  // Projects cards wave tilt
-  const projSec = document.getElementById('projects');
-  if (projSec) {
-    const rel = sy - projSec.offsetTop + wh * 0.5;
-    if (rel > -wh && rel < wh * 2) {
-      document.querySelectorAll('.project-card').forEach((c, i) => {
-        if (!c.matches(':hover') && !c.classList.contains('active-card')) {
-          const tilt = Math.sin(rel * 0.001 + i * 0.3) * 3;
-          c.style.transform = `perspective(1000px) rotateY(${tilt + 8}deg) rotateX(2deg) scale(.95)`;
-        }
-      });
-    }
-  }
-
   revealOnScroll();
 }
 
@@ -642,72 +628,284 @@ function downloadResumePDF() {
 }
 window.downloadResumePDF = downloadResumePDF;
 
-/* ── PROJECTS HORIZONTAL SCROLL ──────────────────────────── */
-(function initProjectsScroll() {
-  const track   = document.getElementById('projectsTrack');
-  const bar     = document.getElementById('projectsScrollBar');
-  const count   = document.getElementById('projCount');
-  const cards   = document.querySelectorAll('.project-card');
-  if (!track || !cards.length) return;
+/* ── PROJECTS — CIRCULAR 3D CAROUSEL ────────────────────── */
+(function initCarousel() {
 
-  const CARD_W  = 340 + 28; // card width + gap
-  let current   = 0;
+  /* ─ Project data ─ */
+  const projects = [
+    { num:'01', title:'Smartphone Market Analysis 2018–2026', tags:['Python','SQL','Power BI'],
+      desc:'Engineered preprocessing workflows in Python/SQL to analyse longitudinal smartphone sales data across 15+ brands. Mid-range CAGR outpacing premium by 12%.',
+      metrics:[{val:'15+',label:'Brands'},{val:'12%',label:'CAGR'},{val:'8yr',label:'Span'}],
+      img:'https://images.pexels.com/photos/7947970/pexels-photo-7947970.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700' },
+    { num:'02', title:'Nykaa Campaign Intelligence Hub', tags:['Power BI','DAX','Analytics'],
+      desc:'Processed 55,000+ marketing records across 6 channels. Multi-page Power BI dashboard tracking ROI, CTR. Email + influencer contributed 61% of total revenue.',
+      metrics:[{val:'55K+',label:'Records'},{val:'6',label:'Channels'},{val:'61%',label:'Revenue'}],
+      img:'https://images.pexels.com/photos/7947568/pexels-photo-7947568.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700' },
+    { num:'03', title:'Customer Churn Analysis', tags:['SQL','Power BI','DAX'],
+      desc:'Analysed customer behavioural data to compute churn risk scores. Identified high-risk segment (≤6 months, no add-ons) with 68% churn probability for targeted retention.',
+      metrics:[{val:'68%',label:'Churn'},{val:'DAX',label:'Measures'},{val:'4',label:'Dashboards'}],
+      img:'https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700' },
+    { num:'04', title:'Nassau Candy Profitability Dashboard', tags:['Python','Streamlit','Plotly'],
+      desc:'Live Streamlit analytics dashboard for Nassau Candy Distributor — product profitability, division performance, Pareto analysis, and factory-level insights.',
+      metrics:[{val:'Live',label:'Dashboard'},{val:'Pareto',label:'Analysis'},{val:'5+',label:'KPIs'}],
+      img:'https://images.pexels.com/photos/1323550/pexels-photo-1323550.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700' },
+    { num:'05', title:'Retail Sales Analysis Dashboard', tags:['SQL','Power BI','Analytics'],
+      desc:'Multi-page retail analytics dashboard evaluating product performance, outlet efficiency, and sales distribution with advanced SQL aggregation and window functions.',
+      metrics:[{val:'Multi',label:'Pages'},{val:'SQL',label:'Advanced'},{val:'10+',label:'Outlets'}],
+      img:'https://images.pexels.com/photos/3962285/pexels-photo-3962285.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700' },
+    { num:'06', title:'Pizza Sales Analytics Dashboard', tags:['SQL','Power BI','KPI'],
+      desc:'Interactive BI dashboard analysing pizza sales trends, customer ordering behaviour, revenue distribution, and product performance with KPI-driven visualisations.',
+      metrics:[{val:'KPI',label:'Driven'},{val:'Trend',label:'Analysis'},{val:'BI',label:'Dashboard'}],
+      img:'https://images.pexels.com/photos/905847/pexels-photo-905847.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700' },
+    { num:'07', title:'Cricket Player Analysis Dashboard', tags:['Power BI','DAX','Sports'],
+      desc:'Interactive Power BI dashboard analysing cricket player statistics, batting and bowling metrics across ODI, T20, and Test formats with dynamic filtering.',
+      metrics:[{val:'3',label:'Formats'},{val:'ODI·T20',label:'·Test'},{val:'DAX',label:'Metrics'}],
+      img:'https://images.pexels.com/photos/10469894/pexels-photo-10469894.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700' },
+    { num:'08', title:'Tamil Movie Recommendation System', tags:['Python','API','TMDb'],
+      desc:'Python-based movie recommendation system using TMDb API with weighted IMDb-style ranking algorithms and Pandas for real-time personalised recommendations.',
+      metrics:[{val:'TMDb',label:'API'},{val:'IMDb',label:'Ranking'},{val:'Live',label:'Real-time'}],
+      img:'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700' },
+  ];
 
-  // Update scroll progress bar + counter
-  function updateUI() {
-    const maxScroll = track.scrollWidth - track.clientWidth;
-    const pct = maxScroll > 0 ? (track.scrollLeft / maxScroll) * 100 : 0;
-    if (bar) bar.style.width = Math.max(8, pct) + '%';
+  let current = 0;
+  let autoTimer = null;
+  let autoProgress = 0;
+  const AUTO_INTERVAL = 4000;
 
-    // Active card
-    const idx = Math.round(track.scrollLeft / CARD_W);
-    current = Math.max(0, Math.min(idx, cards.length - 1));
-    if (count) count.textContent = (current + 1) + ' / ' + cards.length;
+  /* ─ DOM refs ─ */
+  const center    = document.querySelector('.carousel-center');
+  const ccImg     = document.getElementById('ccImg');
+  const ccNum     = document.getElementById('ccNum');
+  const ccTags    = document.getElementById('ccTags');
+  const ccTitle   = document.getElementById('ccTitle');
+  const ccDesc    = document.getElementById('ccDesc');
+  const ccMetrics = document.getElementById('ccMetrics');
+  const thumbs    = document.querySelectorAll('.carousel-thumb');
+  const dotsWrap  = document.getElementById('carouselDots');
+  if (!center) return;
 
-    cards.forEach((c, i) => c.classList.toggle('active-card', i === current));
+  /* ─ Build dots ─ */
+  projects.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsWrap && dotsWrap.appendChild(d);
+  });
+
+  /* ─ Build auto-progress arc ─ */
+  const progressWrap = document.createElement('div');
+  progressWrap.className = 'carousel-progress-wrap';
+  progressWrap.innerHTML = `
+    <div class="carousel-progress-arc">
+      <svg viewBox="0 0 36 36" width="36" height="36">
+        <circle class="arc-track" cx="18" cy="18" r="15.9"/>
+        <circle class="arc-fill" id="arcFill" cx="18" cy="18" r="15.9"
+          style="stroke-dasharray:${2*Math.PI*15.9};stroke-dashoffset:${2*Math.PI*15.9}"/>
+      </svg>
+    </div>
+    <span class="carousel-auto-label">AUTO-PLAY</span>`;
+  document.querySelector('.carousel-controls') &&
+    document.querySelector('.carousel-controls').after(progressWrap);
+  const arcFill = document.getElementById('arcFill');
+  const arcTotal = 2 * Math.PI * 15.9;
+
+  /* ─ Position thumbnails in a circle ─ */
+  function positionThumbs() {
+    const ring = document.getElementById('carouselRing');
+    if (!ring) return;
+    const r = ring.offsetWidth / 2;
+    thumbs.forEach((t, i) => {
+      const angle = (i / projects.length) * Math.PI * 2 - Math.PI / 2;
+      const x = r + Math.cos(angle) * (r - 23) - 23;
+      const y = r + Math.sin(angle) * (r - 23) - 23;
+      t.style.left = x + 'px';
+      t.style.top  = y + 'px';
+    });
+  }
+  positionThumbs();
+  window.addEventListener('resize', positionThumbs);
+
+  /* ─ Render a project into center card ─ */
+  function render(idx, dir) {
+    const p = projects[idx];
+
+    // Animate out
+    center.classList.remove('cc-entering');
+    center.classList.add('cc-leaving');
+
+    setTimeout(() => {
+      // Update content
+      ccImg.src = p.img;
+      ccImg.alt = p.title;
+      ccNum.textContent = p.num;
+      ccTitle.textContent = p.title;
+      ccDesc.textContent  = p.desc;
+      ccTags.innerHTML    = p.tags.map(t => `<span class="cc-tag">${t}</span>`).join('');
+      ccMetrics.innerHTML = p.metrics.map(m =>
+        `<div class="cc-metric"><div class="val">${m.val}</div><div class="label">${m.label}</div></div>`
+      ).join('');
+
+      // Animate in
+      center.classList.remove('cc-leaving');
+      center.classList.add('cc-entering');
+
+      // Thumbnails
+      thumbs.forEach((t, i) => t.classList.toggle('active', i === idx));
+
+      // Dots
+      document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+
+      // Ring rotation animation
+      animateRingTo(idx);
+
+    }, 300);
   }
 
-  track.addEventListener('scroll', updateUI, { passive: true });
+  /* ─ Animate orbit ring to angle ─ */
+  let ringAngle = 0;
+  function animateRingTo(idx) {
+    const targetAngle = -(idx / projects.length) * 360;
+    const ring = document.getElementById('carouselRing');
+    if (!ring) return;
+    ring.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1)';
+    ring.style.transform  = `rotate(${targetAngle}deg)`;
+    // Counter-rotate thumbs so labels stay upright
+    thumbs.forEach(t => {
+      t.style.transition = 'transform .4s cubic-bezier(.22,1,.36,1), border-color .3s, background .3s, box-shadow .3s';
+      t.style.transform  = `rotate(${-targetAngle}deg)`;
+    });
+    // Re-apply active scale on top
+    thumbs.forEach((t, i) => {
+      if (i === idx) t.style.transform = `rotate(${-targetAngle}deg) scale(1.35)`;
+    });
+  }
 
-  // Arrow nav
-  window.scrollProjects = function(dir) {
-    const next = Math.max(0, Math.min(current + dir, cards.length - 1));
-    track.scrollTo({ left: next * CARD_W, behavior: 'smooth' });
-  };
+  /* ─ Navigate ─ */
+  function goTo(idx) {
+    const dir = idx > current ? 1 : -1;
+    current = (idx + projects.length) % projects.length;
+    render(current, dir);
+    resetAuto();
+  }
 
-  // Drag to scroll
-  let isDown = false, startX = 0, scrollLeft = 0;
-  track.addEventListener('mousedown', e => {
-    isDown = true; startX = e.pageX - track.offsetLeft;
-    scrollLeft = track.scrollLeft; track.style.cursor = 'grabbing';
+  window.carouselNext = () => goTo(current + 1);
+  window.carouselPrev = () => goTo(current - 1);
+
+  /* ─ Thumb clicks ─ */
+  thumbs.forEach((t, i) => t.addEventListener('click', () => goTo(i)));
+
+  /* ─ Keyboard ─ */
+  document.addEventListener('keydown', e => {
+    const scene = document.querySelector('.carousel-scene');
+    if (!scene) return;
+    const r = scene.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) {
+      if (e.key === 'ArrowRight') carouselNext();
+      if (e.key === 'ArrowLeft')  carouselPrev();
+    }
   });
-  track.addEventListener('mouseleave', () => { isDown = false; track.style.cursor = 'grab'; });
-  track.addEventListener('mouseup',    () => { isDown = false; track.style.cursor = 'grab'; });
-  track.addEventListener('mousemove',  e => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - track.offsetLeft;
-    track.scrollLeft = scrollLeft - (x - startX) * 1.5;
+
+  /* ─ Swipe support ─ */
+  let touchX = 0;
+  center.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive:true });
+  center.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) dx < 0 ? carouselNext() : carouselPrev();
   });
 
-  // Touch support
-  let touchStartX = 0;
-  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  track.addEventListener('touchmove',  e => {
-    const diff = touchStartX - e.touches[0].clientX;
-    track.scrollLeft += diff * 0.8;
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
+  /* ─ Auto-play ─ */
+  function resetAuto() {
+    clearInterval(autoTimer);
+    autoProgress = 0;
+    autoTimer = setInterval(() => {
+      autoProgress += 100 / (AUTO_INTERVAL / 50);
+      if (arcFill) {
+        arcFill.style.strokeDashoffset = arcTotal * (1 - autoProgress / 100);
+      }
+      if (autoProgress >= 100) {
+        autoProgress = 0;
+        goTo(current + 1);
+      }
+    }, 50);
+  }
 
-  // Keyboard arrow keys when hovering
-  track.setAttribute('tabindex', '0');
-  track.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight') scrollProjects(1);
-    if (e.key === 'ArrowLeft')  scrollProjects(-1);
-  });
+  /* ─ Live canvas background ─ */
+  (function initProjCanvas() {
+    const canvas = document.getElementById('projCanvas');
+    if (!canvas || typeof THREE === 'undefined') return;
 
-  // Init
-  updateUI();
-  setTimeout(updateUI, 100);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
+    camera.position.z = 5;
+
+    // Floating torus knots
+    const geometries = [
+      new THREE.TorusKnotGeometry(.6, .18, 100, 16),
+      new THREE.TorusKnotGeometry(.4, .12, 80, 12),
+      new THREE.OctahedronGeometry(.5),
+      new THREE.IcosahedronGeometry(.4),
+    ];
+    const meshes = geometries.map((g, i) => {
+      const mat = new THREE.MeshBasicMaterial({
+        color: [0x00e5ff, 0xff2d78, 0xb400ff, 0xffd166][i],
+        wireframe:true,
+        transparent:true,
+        opacity: 0.15,
+      });
+      const m = new THREE.Mesh(g, mat);
+      m.position.set(
+        (Math.random() - 0.5) * 6,
+        (Math.random() - 0.5) * 3,
+        (Math.random() - 0.5) * 2
+      );
+      scene.add(m);
+      return m;
+    });
+
+    // Mini particles
+    const pCount = 600;
+    const pPos   = new Float32Array(pCount * 3);
+    for (let i = 0; i < pCount; i++) {
+      pPos[i*3]   = (Math.random() - 0.5) * 12;
+      pPos[i*3+1] = (Math.random() - 0.5) * 8;
+      pPos[i*3+2] = (Math.random() - 0.5) * 4;
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ size:.04, color:0x00e5ff, transparent:true, opacity:.5, blending:THREE.AdditiveBlending });
+    scene.add(new THREE.Points(pGeo, pMat));
+
+    function resize() {
+      const w = canvas.parentElement.offsetWidth;
+      const h = canvas.parentElement.offsetHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    let frame = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      frame += 0.008;
+      meshes.forEach((m, i) => {
+        m.rotation.x = frame * (0.3 + i * 0.1);
+        m.rotation.y = frame * (0.2 + i * 0.15);
+        m.position.y += Math.sin(frame + i) * 0.003;
+      });
+      renderer.render(scene, camera);
+    }
+    animate();
+  })();
+
+  /* ─ Init ─ */
+  render(0, 1);
+  resetAuto();
+
 })();
+
 

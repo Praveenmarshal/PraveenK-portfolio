@@ -277,126 +277,57 @@
     <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
     <p class="section-subtitle">Real-world data projects showcasing end-to-end analytical capabilities.</p>
   </div>
-  <div class="projects-track-wrap" id="projectsTrack">
-    <div class="projects-grid" id="projectsGrid">
-    <div class="project-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="pc-number">01</div>
-      <div class="project-img-wrap"><img src="https://images.pexels.com/photos/7947970/pexels-photo-7947970.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700" alt="Smartphone Market Analysis" loading="lazy"></div>
-      <div class="project-tags"><span class="project-tag">Python</span><span class="project-tag">SQL</span><span class="project-tag">Power BI</span></div>
-      <h3>Smartphone Market Analysis 2018–2026</h3>
-      <p>Engineered preprocessing workflows in Python/SQL to analyse longitudinal smartphone sales data across 15+ brands. Mid-range CAGR outpacing premium by 12%.</p>
-      <div class="project-metrics">
-        <div class="project-metric"><div class="val">15+</div><div class="label">Brands</div></div>
-        <div class="project-metric"><div class="val">12%</div><div class="label">CAGR Found</div></div>
-        <div class="project-metric"><div class="val">8yr</div><div class="label">Data Span</div></div>
+
+  <!-- 3D Carousel wrapper -->
+  <div class="carousel-scene" id="carouselScene">
+
+    <!-- Live 3D background canvas -->
+    <canvas id="projCanvas"></canvas>
+
+    <!-- Rotating ring of orbit dots -->
+    <div class="orbit-ring orbit-ring-1"></div>
+    <div class="orbit-ring orbit-ring-2"></div>
+    <div class="orbit-ring orbit-ring-3"></div>
+
+    <!-- Centre display card -->
+    <div class="carousel-center">
+      <div class="cc-img-wrap">
+        <img id="ccImg" src="" alt="">
+        <div class="cc-img-overlay"></div>
       </div>
-      <div class="project-links"><a class="project-link" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ GitHub</a></div>
+      <div class="cc-body">
+        <div class="cc-num" id="ccNum">01</div>
+        <div class="cc-tags" id="ccTags"></div>
+        <h3 class="cc-title" id="ccTitle"></h3>
+        <p  class="cc-desc"  id="ccDesc"></p>
+        <div class="cc-metrics" id="ccMetrics"></div>
+        <a  class="cc-link"   id="ccLink" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ View on GitHub</a>
+      </div>
+      <div class="cc-scanline"></div>
     </div>
 
-    <div class="project-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="pc-number">02</div>
-      <div class="project-img-wrap"><img src="https://images.pexels.com/photos/7947568/pexels-photo-7947568.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700" alt="Nykaa Campaign Hub" loading="lazy"></div>
-      <div class="project-tags"><span class="project-tag">Power BI</span><span class="project-tag">DAX</span><span class="project-tag">Analytics</span></div>
-      <h3>Nykaa Campaign Intelligence Hub</h3>
-      <p>Processed 55,000+ marketing records across 6 channels. Multi-page Power BI dashboard tracking ROI, CTR. Email + influencer contributed 61% of total revenue.</p>
-      <div class="project-metrics">
-        <div class="project-metric"><div class="val">55K+</div><div class="label">Records</div></div>
-        <div class="project-metric"><div class="val">6</div><div class="label">Channels</div></div>
-        <div class="project-metric"><div class="val">61%</div><div class="label">Revenue Share</div></div>
-      </div>
-      <div class="project-links"><a class="project-link" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ GitHub</a></div>
+    <!-- Carousel thumbnails (circular) -->
+    <div class="carousel-ring" id="carouselRing">
+      <div class="carousel-thumb active" data-idx="0"><span>01</span></div>
+      <div class="carousel-thumb" data-idx="1"><span>02</span></div>
+      <div class="carousel-thumb" data-idx="2"><span>03</span></div>
+      <div class="carousel-thumb" data-idx="3"><span>04</span></div>
+      <div class="carousel-thumb" data-idx="4"><span>05</span></div>
+      <div class="carousel-thumb" data-idx="5"><span>06</span></div>
+      <div class="carousel-thumb" data-idx="6"><span>07</span></div>
+      <div class="carousel-thumb" data-idx="7"><span>08</span></div>
     </div>
+  </div>
 
-    <div class="project-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="pc-number">03</div>
-      <div class="project-img-wrap"><img src="https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700" alt="Customer Churn Analysis" loading="lazy"></div>
-      <div class="project-tags"><span class="project-tag">SQL</span><span class="project-tag">Power BI</span><span class="project-tag">DAX</span></div>
-      <h3>Customer Churn Analysis</h3>
-      <p>Analysed customer behavioural data to compute churn risk scores. Identified high-risk segment (≤6 months, no add-ons) with 68% churn probability for targeted retention.</p>
-      <div class="project-metrics">
-        <div class="project-metric"><div class="val">68%</div><div class="label">Churn Prob.</div></div>
-        <div class="project-metric"><div class="val">DAX</div><div class="label">Measures</div></div>
-        <div class="project-metric"><div class="val">4</div><div class="label">Dashboards</div></div>
-      </div>
-      <div class="project-links"><a class="project-link" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ GitHub</a></div>
-    </div>
-
-    <div class="project-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="pc-number">04</div>
-      <div class="project-img-wrap"><img src="https://images.pexels.com/photos/1323550/pexels-photo-1323550.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700" alt="Nassau Candy Dashboard" loading="lazy"></div>
-      <div class="project-tags"><span class="project-tag">Python</span><span class="project-tag">Streamlit</span><span class="project-tag">Plotly</span></div>
-      <h3>Nassau Candy Profitability Dashboard</h3>
-      <p>Live Streamlit analytics dashboard for Nassau Candy Distributor — product profitability, division performance, Pareto analysis, and factory-level insights.</p>
-      <div class="project-metrics">
-        <div class="project-metric"><div class="val">Live</div><div class="label">Dashboard</div></div>
-        <div class="project-metric"><div class="val">Pareto</div><div class="label">Analysis</div></div>
-        <div class="project-metric"><div class="val">5+</div><div class="label">KPI Views</div></div>
-      </div>
-      <div class="project-links"><a class="project-link" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ GitHub</a></div>
-    </div>
-
-    <div class="project-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="pc-number">05</div>
-      <div class="project-img-wrap"><img src="https://images.pexels.com/photos/3962285/pexels-photo-3962285.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700" alt="Retail Sales Dashboard" loading="lazy"></div>
-      <div class="project-tags"><span class="project-tag">SQL</span><span class="project-tag">Power BI</span><span class="project-tag">Analytics</span></div>
-      <h3>Retail Sales Analysis Dashboard</h3>
-      <p>Multi-page retail analytics dashboard evaluating product performance, outlet efficiency, and sales distribution with advanced SQL aggregation and window functions.</p>
-      <div class="project-metrics">
-        <div class="project-metric"><div class="val">Multi</div><div class="label">Pages</div></div>
-        <div class="project-metric"><div class="val">SQL</div><div class="label">Advanced</div></div>
-        <div class="project-metric"><div class="val">10+</div><div class="label">Outlets</div></div>
-      </div>
-      <div class="project-links"><a class="project-link" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ GitHub</a></div>
-    </div>
-
-    <div class="project-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="pc-number">06</div>
-      <div class="project-img-wrap"><img src="https://images.pexels.com/photos/905847/pexels-photo-905847.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700" alt="Pizza Sales Dashboard" loading="lazy"></div>
-      <div class="project-tags"><span class="project-tag">SQL</span><span class="project-tag">Power BI</span><span class="project-tag">KPI</span></div>
-      <h3>Pizza Sales Analytics Dashboard</h3>
-      <p>Interactive BI dashboard analysing pizza sales trends, customer ordering behaviour, revenue distribution, and product performance with KPI-driven visualisations.</p>
-      <div class="project-metrics">
-        <div class="project-metric"><div class="val">KPI</div><div class="label">Driven</div></div>
-        <div class="project-metric"><div class="val">Trend</div><div class="label">Analysis</div></div>
-        <div class="project-metric"><div class="val">BI</div><div class="label">Dashboard</div></div>
-      </div>
-      <div class="project-links"><a class="project-link" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ GitHub</a></div>
-    </div>
-
-    <div class="project-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="pc-number">07</div>
-      <div class="project-img-wrap"><img src="https://images.pexels.com/photos/10469894/pexels-photo-10469894.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700" alt="Cricket Player Dashboard" loading="lazy"></div>
-      <div class="project-tags"><span class="project-tag">Power BI</span><span class="project-tag">DAX</span><span class="project-tag">Sports Analytics</span></div>
-      <h3>Cricket Player Analysis Dashboard</h3>
-      <p>Interactive Power BI dashboard analysing cricket player statistics, batting and bowling metrics across ODI, T20, and Test formats with dynamic filtering.</p>
-      <div class="project-metrics">
-        <div class="project-metric"><div class="val">3</div><div class="label">Formats</div></div>
-        <div class="project-metric"><div class="val">ODI·T20</div><div class="label">·Test</div></div>
-        <div class="project-metric"><div class="val">DAX</div><div class="label">Metrics</div></div>
-      </div>
-      <div class="project-links"><a class="project-link" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ GitHub</a></div>
-    </div>
-
-    <div class="project-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="pc-number">08</div>
-      <div class="project-img-wrap"><img src="https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=700" alt="Tamil Movie Recommendation" loading="lazy"></div>
-      <div class="project-tags"><span class="project-tag">Python</span><span class="project-tag">API</span><span class="project-tag">TMDb</span></div>
-      <h3>Tamil Movie Recommendation System</h3>
-      <p>Python-based movie recommendation system using TMDb API with weighted IMDb-style ranking algorithms and Pandas for real-time personalised recommendations.</p>
-      <div class="project-metrics">
-        <div class="project-metric"><div class="val">TMDb</div><div class="label">API</div></div>
-        <div class="project-metric"><div class="val">IMDb</div><div class="label">Ranking</div></div>
-        <div class="project-metric"><div class="val">Live</div><div class="label">Real-time</div></div>
-      </div>
-      <div class="project-links"><a class="project-link" href="https://github.com/praveenmarshal" target="_blank" rel="noopener">⌘ GitHub</a></div>
-    </div>
-  </div><!-- end projects-grid -->
-  </div><!-- end projects-track-wrap -->
-  <div class="projects-scroll-track"><div class="projects-scroll-bar" id="projectsScrollBar"></div></div>
-  <div class="projects-nav">
-    <button class="pnav-btn" onclick="scrollProjects(-1)">←</button>
-    <span class="pnav-count" id="projCount">1 / 8</span>
-    <button class="pnav-btn" onclick="scrollProjects(1)">→</button>
+  <!-- Controls -->
+  <div class="carousel-controls">
+    <button class="carousel-btn" id="cPrev" onclick="carouselPrev()">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="carousel-dots" id="carouselDots"></div>
+    <button class="carousel-btn" id="cNext" onclick="carouselNext()">
+      <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
   </div>
 </section>
 
