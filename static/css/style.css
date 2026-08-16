@@ -264,45 +264,46 @@ a{text-decoration:none;color:inherit}
   filter:blur(90px);
 }
 
-/* 4 Decorative 3D Images from Prompt */
+/* 4 Decorative 3D Images from Prompt (Enlarged & Positioned Closer) */
 .about-decor{
   position:absolute;pointer-events:none;z-index:1;
   user-select:none;object-fit:contain;
-  filter:drop-shadow(0 12px 28px rgba(0,0,0,.6));
+  filter:drop-shadow(0 14px 32px rgba(0,0,0,.65));
   transition:transform .4s ease;
 }
 .about-decor-tl{
-  top:4%;left:2%;
-  width:clamp(90px,13vw,190px);height:auto;
+  top:10%;left:8%;
+  width:clamp(130px,16vw,240px);height:auto;
   animation:float-widget-1 8s ease-in-out infinite alternate;
 }
 .about-decor-tr{
-  top:4%;right:2%;
-  width:clamp(90px,13vw,190px);height:auto;
+  top:10%;right:8%;
+  width:clamp(130px,16vw,240px);height:auto;
   animation:float-widget-2 9s ease-in-out infinite alternate;
 }
 .about-decor-bl{
-  bottom:6%;left:3%;
-  width:clamp(80px,11vw,160px);height:auto;
+  bottom:10%;left:9%;
+  width:clamp(115px,14vw,210px);height:auto;
   animation:float-widget-2 8.5s ease-in-out infinite alternate;
 }
 .about-decor-br{
-  bottom:6%;right:3%;
-  width:clamp(90px,13vw,190px);height:auto;
+  bottom:10%;right:9%;
+  width:clamp(130px,16vw,240px);height:auto;
   animation:float-widget-1 9.5s ease-in-out infinite alternate;
 }
 
-@media(min-width:640px){
-  .about-decor-tl{left:3%}
-  .about-decor-tr{right:3%}
-  .about-decor-bl{left:5%}
-  .about-decor-br{right:5%}
+@media(min-width:1200px){
+  .about-decor-tl{top:12%;left:11%}
+  .about-decor-tr{top:12%;right:11%}
+  .about-decor-bl{bottom:11%;left:12%}
+  .about-decor-br{bottom:11%;right:12%}
 }
-@media(min-width:768px){
-  .about-decor-tl{left:4%}
-  .about-decor-tr{right:4%}
-  .about-decor-bl{left:8%}
-  .about-decor-br{right:8%}
+
+@media(max-width:900px){
+  .about-decor-tl{top:6%;left:4%;width:120px}
+  .about-decor-tr{top:6%;right:4%;width:120px}
+  .about-decor-bl{bottom:6%;left:4%;width:100px}
+  .about-decor-br{bottom:6%;right:4%;width:115px}
 }
 
 @keyframes float-widget-1{
@@ -317,7 +318,7 @@ a{text-decoration:none;color:inherit}
 }
 
 @media(max-width:640px){
-  .about-decor{opacity:.4;width:80px}
+  .about-decor{opacity:.35;width:95px}
 }
 
 .section-tag-dark{
