@@ -68,27 +68,40 @@ window.addEventListener('scroll', function() {
   });
 })();
 
-/* ── FADE-IN ON SCROLL ────────────────────────────────────── */
+/* ── BIDIRECTIONAL SCROLL REVEAL (UP & DOWN) ──────────────── */
 (function initFadeIn() {
   const els = document.querySelectorAll('[data-fade]');
-  els.forEach(function(el) {
+  if (!els.length) return;
+
+  function setInitialTransform(el) {
     const y = parseFloat(el.dataset.fadeY) || 30;
     const x = parseFloat(el.dataset.fadeX) || 0;
     el.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
-  });
+  }
+
+  els.forEach(setInitialTransform);
 
   const observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
+      const el = entry.target;
+      const delay = parseFloat(el.dataset.fadeDelay) || 0;
+
       if (entry.isIntersecting) {
-        const el = entry.target;
-        const delay = parseFloat(el.dataset.fadeDelay) || 0;
-        setTimeout(function() {
+        if (el._revealTimer) clearTimeout(el._revealTimer);
+        el._revealTimer = setTimeout(function() {
           el.classList.add('visible');
         }, delay * 1000);
-        observer.unobserve(el);
+      } else {
+        const rect = entry.boundingClientRect;
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        if (rect.bottom < -40 || rect.top > vh + 40) {
+          if (el._revealTimer) clearTimeout(el._revealTimer);
+          el.classList.remove('visible');
+          setInitialTransform(el);
+        }
       }
     });
-  }, { rootMargin: '50px', threshold: 0 });
+  }, { rootMargin: '0px 0px -40px 0px', threshold: [0, 0.1] });
 
   els.forEach(function(el) { observer.observe(el); });
 })();
