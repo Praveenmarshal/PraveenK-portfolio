@@ -106,6 +106,36 @@ window.addEventListener('scroll', function() {
   els.forEach(function(el) { observer.observe(el); });
 })();
 
+/* ── SKILL BARS SCROLL ANIMATION ──────────────────────────── */
+(function initSkillBars() {
+  const bars = document.querySelectorAll('.skill-bar-fill');
+  if (!bars.length) return;
+
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      const fill = entry.target;
+      if (entry.isIntersecting) {
+        const styleAttr = fill.getAttribute('style') || '';
+        const match = styleAttr.match(/--skill-pct:\s*([^;]+)/);
+        const targetPct = match ? match[1].trim() : '85%';
+        fill.style.width = targetPct;
+      } else {
+        const rect = entry.boundingClientRect;
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        if (rect.bottom < -40 || rect.top > vh + 40) {
+          fill.style.width = '0%';
+        }
+      }
+    });
+  }, { rootMargin: '0px 0px -40px 0px', threshold: [0, 0.15] });
+
+  bars.forEach(function(bar) {
+    bar.style.width = '0%';
+    bar.style.transition = 'width 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+    observer.observe(bar);
+  });
+})();
+
 /* ── MAGNETIC HOVER EFFECT ────────────────────────────────── */
 (function initMagnet() {
   document.querySelectorAll('[data-magnet]').forEach(function(el) {
