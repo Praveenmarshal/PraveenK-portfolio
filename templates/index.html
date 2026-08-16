@@ -18,7 +18,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
@@ -27,8 +26,6 @@
 
 <canvas id="bgSequenceCanvas"></canvas>
 <div class="bg-sequence-overlay"></div>
-<canvas id="threeCanvas"></canvas>
-<div class="scan-lines"></div>
 <div class="page-progress" id="pageProgress"></div>
 
 <div id="loader">
@@ -74,7 +71,6 @@
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-grid-bg"></div>
   <div class="hero-layout">
     <div class="hero-text-col">
       <div class="hero-status"><span class="status-dot"></span><span>Available for Opportunities</span></div>

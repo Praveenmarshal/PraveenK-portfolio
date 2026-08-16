@@ -212,20 +212,6 @@ a{text-decoration:none;color:inherit}
   background:radial-gradient(ellipse at center, rgba(15,1,3,0.52) 0%, rgba(15,1,3,0.88) 100%);
 }
 
-/* ── THREE.JS CANVAS ─────────────────────────────────────── */
-#threeCanvas{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  z-index:1;pointer-events:none;
-  opacity:0.6;
-}
-
-/* ── SCAN LINES ──────────────────────────────────────────── */
-.scan-lines{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  z-index:1;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);
-}
-
 /* ── PAGE PROGRESS ───────────────────────────────────────── */
 .page-progress{
   position:fixed;top:0;left:0;height:2px;
@@ -378,14 +364,6 @@ section{
 }
 
 /* ── HERO ────────────────────────────────────────────────── */
-.hero-grid-bg{
-  position:absolute;inset:0;z-index:0;
-  background-image:
-    linear-gradient(rgba(0,229,255,.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,229,255,.04) 1px,transparent 1px);
-  background-size:60px 60px;
-  mask-image:radial-gradient(ellipse at center,black 40%,transparent 80%);
-}
 .hero-layout{
   display:grid;grid-template-columns:1fr 1fr;
   gap:4rem;align-items:center;
