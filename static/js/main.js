@@ -176,32 +176,40 @@ window.addEventListener('scroll', function() {
   const row2 = document.querySelector('.marquee-row-2');
   if (!section || !row1 || !row2) return;
 
-  const gifs = [
-    'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif',
-    'https://motionsites.ai/assets/hero-codenest-preview-Cgppc2qV.gif',
-    'https://motionsites.ai/assets/hero-vex-ventures-preview-BczMFIiw.gif',
-    'https://motionsites.ai/assets/hero-stellar-ai-v2-preview-DjvxjG3C.gif',
-    'https://motionsites.ai/assets/hero-asme-preview-B_nGDnTP.gif',
-    'https://motionsites.ai/assets/hero-transform-data-preview-Cx5OU29N.gif',
-    'https://motionsites.ai/assets/hero-vitara-preview-Cjz2QYyU.gif',
-    'https://motionsites.ai/assets/hero-terra-preview-BFjrCr7T.gif',
-    'https://motionsites.ai/assets/hero-skyelite-preview-DHaZIgUv.gif',
-    'https://motionsites.ai/assets/hero-aethera-preview-DknSlcTa.gif',
-    'https://motionsites.ai/assets/hero-designpro-preview-D8c5_een.gif',
-    'https://motionsites.ai/assets/hero-stellar-ai-preview-D3HL6bw1.gif',
-    'https://motionsites.ai/assets/hero-xportfolio-preview-D4A8maiC.gif',
-    'https://motionsites.ai/assets/hero-orbit-web3-preview-BXt4OttD.gif',
-    'https://motionsites.ai/assets/hero-nexora-preview-cx5HmUgo.gif',
-    'https://motionsites.ai/assets/hero-evr-ventures-preview-DZxeVFEX.gif',
-    'https://motionsites.ai/assets/hero-planet-orbit-preview-DWAP8Z1P.gif',
-    'https://motionsites.ai/assets/hero-new-era-preview-CocuDUm9.gif',
-    'https://motionsites.ai/assets/hero-wealth-preview-B70idl_u.gif',
-    'https://motionsites.ai/assets/hero-luminex-preview-CxOP7ce6.gif',
-    'https://motionsites.ai/assets/hero-celestia-preview-0yO3jXO8.gif'
+  const techImages = [
+    // Cybersecurity
+    'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80', // Cyber Hardware Lock
+    'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80', // Digital Defense Shield
+    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80', // Binary Security Code
+    'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=800&q=80', // Cyber Network Encryption
+    'https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=80', // Security Threat Operations
+    'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80', // Server Cloud Infrastructure
+    'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80', // Cyber Neon Defense
+    'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=800&q=80', // AI Code Intelligence
+
+    // Data Analysis
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80', // Executive Analytics Dashboard
+    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80', // Business Metrics Charts
+    'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80', // Financial Candlestick Trends
+    'https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80', // Predictive Risk Models
+    'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=800&q=80', // Multi-Channel BI Reporting
+    'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&w=800&q=80', // Business Intelligence Monitor
+    'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80', // Statistical Data Insights
+    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80', // Strategic Analytics Planning
+
+    // Fullstack Development
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80', // Fullstack Web Coding
+    'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80', // Dark Code Editor IDE
+    'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80', // Laptop Software Engineering
+    'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=800&q=80', // Python Script Execution
+    'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80', // Fullstack UI/UX & Web Apps
+    'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80', // Backend Cloud Architecture
+    'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80', // JavaScript Web Programming
+    'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&w=800&q=80'  // Modern Dev Tech Console
   ];
 
-  const tiles1 = gifs.slice(0, 11);
-  const tiles2 = gifs.slice(11);
+  const tiles1 = techImages.slice(0, 12);
+  const tiles2 = techImages.slice(12);
 
   // Triple for seamless loop
   function buildRow(row, srcs) {
