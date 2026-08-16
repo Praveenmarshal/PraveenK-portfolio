@@ -243,26 +243,44 @@ window.addEventListener('scroll', function() {
   var cards = document.querySelectorAll('.project-card');
   if (!cards.length) return;
   var total = cards.length;
+  var isTicking = false;
 
-  function onScroll() {
+  function update() {
+    var vh = window.innerHeight;
+    var baseTop = window.innerWidth >= 768 ? 100 : (window.innerWidth >= 640 ? 90 : 70);
+
     cards.forEach(function(card, i) {
       var container = card.closest('.project-card-container');
       if (!container) return;
+
       var rect = container.getBoundingClientRect();
-      var scrollProgress = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)));
-      var targetScale = 1 - (total - 1 - i) * 0.03;
-      var scale = 1 - (1 - targetScale) * scrollProgress;
-      scale = Math.max(targetScale, Math.min(1, scale));
-      card.style.transform = 'scale(' + scale + ')';
-      card.style.top = (96 + i * 28) + 'px';
+      var stickyOffset = baseTop + i * 8;
+      card.style.top = stickyOffset + 'px';
+
+      // When the card container has reached stickyOffset, calculate progress towards next
+      var scrollPast = stickyOffset - rect.top;
+      var scrollRange = Math.max(1, rect.height - vh * 0.4);
+      var progress = Math.max(0, Math.min(1, scrollPast / scrollRange));
+
+      var targetScale = 1 - (total - 1 - i) * 0.02;
+      var currentScale = 1 - (1 - targetScale) * progress;
+      var clampedScale = Math.max(targetScale, Math.min(1, currentScale));
+
+      card.style.transform = 'scale(' + clampedScale + ')';
     });
+    isTicking = false;
   }
 
-  // Only enable sticky on desktop
-  if (window.innerWidth >= 640) {
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+  function onScroll() {
+    if (!isTicking) {
+      isTicking = true;
+      requestAnimationFrame(update);
+    }
   }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  update();
 })();
 
 /* ── SMOOTH ANCHOR SCROLL ───────────────────────────────── */

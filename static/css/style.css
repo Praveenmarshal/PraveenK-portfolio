@@ -404,21 +404,25 @@ a{text-decoration:none;color:inherit}
 /* Sticky stacking cards */
 .project-card-container{
   position:relative;
-  height:85vh;
+  height:95vh;
+  min-height:650px;
+  margin-bottom:20px;
 }
 .project-card{
   position:sticky;
-  top:96px;
+  top:80px;
   max-width:1200px;margin:0 auto;
   border-radius:40px;
   border:2px solid #D7E2EA;
   background:#0C0C0C;
   padding:16px;
   will-change:transform;
-  transition:transform .3s;
+  transform-origin:center top;
+  box-shadow:0 -8px 30px rgba(0,0,0,0.7),0 20px 40px rgba(0,0,0,0.9);
+  transition:transform .08s linear;
 }
-@media(min-width:640px){.project-card{border-radius:50px;padding:24px}}
-@media(min-width:768px){.project-card{top:128px;border-radius:60px;padding:32px}}
+@media(min-width:640px){.project-card{top:96px;border-radius:50px;padding:24px}}
+@media(min-width:768px){.project-card{top:110px;border-radius:60px;padding:32px}}
 
 .pc-top{
   display:flex;align-items:center;gap:16px;
