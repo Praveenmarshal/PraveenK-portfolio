@@ -22,6 +22,164 @@
   });
 })();
 
+/* ── SCROLL-BASED IMAGE SEQUENCE BACKGROUND ──────────────── */
+(function initScrollSequence() {
+  const canvas = document.getElementById('bgSequenceCanvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const TOTAL_FRAMES = 270;
+  const frames = new Array(TOTAL_FRAMES);
+  const loaded = new Array(TOTAL_FRAMES).fill(false);
+  let currentFrame = 0;
+  let targetFrame = 0;
+  let isTicking = false;
+  let lastDrawnIndex = -1;
+
+  function pad(num) {
+    return String(num).padStart(5, '0');
+  }
+
+  function getFrameUrl(idx) {
+    return `/static/images/sequence/${pad(idx + 1)}.jpg`;
+  }
+
+  // Preload frame 0 immediately for instant display
+  const firstImg = new Image();
+  firstImg.src = getFrameUrl(0);
+  firstImg.onload = () => {
+    frames[0] = firstImg;
+    loaded[0] = true;
+    renderFrame(0);
+    startProgressivePreload();
+  };
+  firstImg.onerror = () => {
+    startProgressivePreload();
+  };
+
+  // Progressive preloading strategy (priority keyframes first, then fill gaps)
+  function startProgressivePreload() {
+    const priority = [];
+    // Wave 1: Every 5th frame for instant scrub response across the whole page
+    for (let i = 0; i < TOTAL_FRAMES; i += 5) {
+      if (i !== 0) priority.push(i);
+    }
+    // Wave 2: All remaining frames for full 60fps cinematic fluidity
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      if (i % 5 !== 0) priority.push(i);
+    }
+
+    let ptr = 0;
+    const CONCURRENCY = 8;
+
+    function loadNext() {
+      if (ptr >= priority.length) return;
+      const idx = priority[ptr++];
+      const img = new Image();
+      img.src = getFrameUrl(idx);
+      img.onload = () => {
+        frames[idx] = img;
+        loaded[idx] = true;
+        // If current displayed frame is waiting for closer frames, trigger render
+        if (Math.abs(Math.round(currentFrame) - idx) < 4) {
+          renderFrame(Math.round(currentFrame));
+        }
+        loadNext();
+      };
+      img.onerror = () => {
+        loadNext();
+      };
+    }
+
+    for (let c = 0; c < CONCURRENCY; c++) {
+      loadNext();
+    }
+  }
+
+  function resizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    lastDrawnIndex = -1;
+    renderFrame(Math.round(currentFrame));
+  }
+
+  window.addEventListener('resize', resizeCanvas, { passive: true });
+  resizeCanvas();
+
+  function findNearestLoadedIndex(targetIdx) {
+    if (loaded[targetIdx] && frames[targetIdx]) return targetIdx;
+    for (let d = 1; d < TOTAL_FRAMES; d++) {
+      const prev = targetIdx - d;
+      if (prev >= 0 && loaded[prev] && frames[prev]) return prev;
+      const next = targetIdx + d;
+      if (next < TOTAL_FRAMES && loaded[next] && frames[next]) return next;
+    }
+    return 0;
+  }
+
+  function renderFrame(frameIdx) {
+    const bestIdx = findNearestLoadedIndex(frameIdx);
+    const img = frames[bestIdx];
+    if (!img || !img.complete || img.naturalWidth === 0) return;
+
+    if (bestIdx === lastDrawnIndex && canvas.width > 0) return;
+    lastDrawnIndex = bestIdx;
+
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const iw = img.naturalWidth || 1920;
+    const ih = img.naturalHeight || 1080;
+
+    // Object-fit: cover (centered crop)
+    const cRatio = cw / ch;
+    const iRatio = iw / ih;
+
+    let dw, dh, dx, dy;
+    if (cRatio > iRatio) {
+      dw = cw;
+      dh = cw / iRatio;
+      dx = 0;
+      dy = (ch - dh) / 2;
+    } else {
+      dh = ch;
+      dw = ch * iRatio;
+      dx = (cw - dw) / 2;
+      dy = 0;
+    }
+
+    ctx.drawImage(img, dx, dy, dw, dh);
+  }
+
+  function updateScroll() {
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const scrollFrac = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+    targetFrame = scrollFrac * (TOTAL_FRAMES - 1);
+
+    if (!isTicking) {
+      isTicking = true;
+      requestAnimationFrame(animStep);
+    }
+  }
+
+  function animStep() {
+    const diff = targetFrame - currentFrame;
+    if (Math.abs(diff) < 0.05) {
+      currentFrame = targetFrame;
+      renderFrame(Math.round(currentFrame));
+      isTicking = false;
+    } else {
+      currentFrame += diff * 0.16; // smooth spring lerp
+      renderFrame(Math.round(currentFrame));
+      requestAnimationFrame(animStep);
+    }
+  }
+
+  window.addEventListener('scroll', updateScroll, { passive: true });
+  // Initial frame compute
+  setTimeout(updateScroll, 50);
+})();
+
 /* ── THREE.JS PARTICLE FIELD ─────────────────────────────── */
 (function initThree() {
   const canvas = document.getElementById('threeCanvas');
