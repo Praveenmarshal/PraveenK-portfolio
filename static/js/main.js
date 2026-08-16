@@ -6,108 +6,6 @@
 /* ── THEME INIT (single dark theme) ─────────────────────── */
 document.documentElement.setAttribute('data-theme', 'dark');
 
-/* ── SCROLL SEQUENCE BACKGROUND ─────────────────────────── */
-(function initScrollSequence() {
-  const canvas = document.getElementById('bgSequenceCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  const TOTAL_FRAMES = 270;
-  const images = new Array(TOTAL_FRAMES).fill(null);
-  let currentFrame = 0;
-  let targetFrame = 0;
-  let isTicking = false;
-
-  function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-    ctx.scale(dpr, dpr);
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
-    renderFrame(Math.round(currentFrame));
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  function framePath(i) {
-    return '/static/images/sequence/' + String(i + 1).padStart(5, '0') + '.jpg';
-  }
-
-  // Preload first frame immediately
-  const first = new Image();
-  first.src = framePath(0);
-  first.onload = function () {
-    images[0] = first;
-    renderFrame(0);
-  };
-
-  // Progressive preload: every 5th frame first, then fill gaps
-  let tier = 0;
-  function preloadTier() {
-    const step = tier === 0 ? 5 : 1;
-    let loaded = 0, total = 0;
-    for (let i = 0; i < TOTAL_FRAMES; i += step) {
-      if (images[i]) continue;
-      total++;
-      const img = new Image();
-      img.src = framePath(i);
-      img.onload = function () {
-        images[i] = img;
-        loaded++;
-        if (loaded === total && tier === 0) { tier = 1; preloadTier(); }
-      };
-    }
-    if (total === 0 && tier === 0) { tier = 1; preloadTier(); }
-  }
-  preloadTier();
-
-  function renderFrame(idx) {
-    idx = Math.max(0, Math.min(TOTAL_FRAMES - 1, idx));
-    let img = images[idx];
-    if (!img) {
-      for (let d = 1; d < TOTAL_FRAMES; d++) {
-        if (images[idx - d]) { img = images[idx - d]; break; }
-        if (images[idx + d]) { img = images[idx + d]; break; }
-      }
-    }
-    if (!img) return;
-
-    const cw = canvas.width / (Math.min(window.devicePixelRatio || 1, 2));
-    const ch = canvas.height / (Math.min(window.devicePixelRatio || 1, 2));
-    const ir = img.naturalWidth / img.naturalHeight;
-    const cr = cw / ch;
-    let dw, dh, dx, dy;
-    if (cr > ir) { dw = cw; dh = cw / ir; dx = 0; dy = (ch - dh) / 2; }
-    else { dh = ch; dw = ch * ir; dy = 0; dx = (cw - dw) / 2; }
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(img, dx, dy, dw, dh);
-  }
-
-  function updateScroll() {
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const scrollFrac = Math.max(0, Math.min(1, window.scrollY / maxScroll));
-    targetFrame = scrollFrac * (TOTAL_FRAMES - 1);
-    if (!isTicking) { isTicking = true; requestAnimationFrame(animStep); }
-  }
-
-  function animStep() {
-    const diff = targetFrame - currentFrame;
-    if (Math.abs(diff) < 0.05) {
-      currentFrame = targetFrame;
-      renderFrame(Math.round(currentFrame));
-      isTicking = false;
-    } else {
-      currentFrame += diff * 0.16;
-      renderFrame(Math.round(currentFrame));
-      requestAnimationFrame(animStep);
-    }
-  }
-
-  window.addEventListener('scroll', updateScroll, { passive: true });
-  setTimeout(updateScroll, 50);
-})();
-
 /* ── LOADER ─────────────────────────────────────────────── */
 const loaderMessages = [
   'INITIALISING SYSTEMS...', 'LOADING DATA MODULES...', 'COMPILING PORTFOLIO...',
@@ -237,14 +135,32 @@ window.addEventListener('scroll', function() {
   const row2 = document.querySelector('.marquee-row-2');
   if (!section || !row1 || !row2) return;
 
-  // Use background sequence frames as tiles
-  var tiles1 = [], tiles2 = [];
-  for (var i = 1; i <= 11; i++) {
-    tiles1.push('/static/images/sequence/' + String(i * 5).padStart(5, '0') + '.jpg');
-  }
-  for (var i = 12; i <= 21; i++) {
-    tiles2.push('/static/images/sequence/' + String(i * 5).padStart(5, '0') + '.jpg');
-  }
+  const gifs = [
+    'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif',
+    'https://motionsites.ai/assets/hero-codenest-preview-Cgppc2qV.gif',
+    'https://motionsites.ai/assets/hero-vex-ventures-preview-BczMFIiw.gif',
+    'https://motionsites.ai/assets/hero-stellar-ai-v2-preview-DjvxjG3C.gif',
+    'https://motionsites.ai/assets/hero-asme-preview-B_nGDnTP.gif',
+    'https://motionsites.ai/assets/hero-transform-data-preview-Cx5OU29N.gif',
+    'https://motionsites.ai/assets/hero-vitara-preview-Cjz2QYyU.gif',
+    'https://motionsites.ai/assets/hero-terra-preview-BFjrCr7T.gif',
+    'https://motionsites.ai/assets/hero-skyelite-preview-DHaZIgUv.gif',
+    'https://motionsites.ai/assets/hero-aethera-preview-DknSlcTa.gif',
+    'https://motionsites.ai/assets/hero-designpro-preview-D8c5_een.gif',
+    'https://motionsites.ai/assets/hero-stellar-ai-preview-D3HL6bw1.gif',
+    'https://motionsites.ai/assets/hero-xportfolio-preview-D4A8maiC.gif',
+    'https://motionsites.ai/assets/hero-orbit-web3-preview-BXt4OttD.gif',
+    'https://motionsites.ai/assets/hero-nexora-preview-cx5HmUgo.gif',
+    'https://motionsites.ai/assets/hero-evr-ventures-preview-DZxeVFEX.gif',
+    'https://motionsites.ai/assets/hero-planet-orbit-preview-DWAP8Z1P.gif',
+    'https://motionsites.ai/assets/hero-new-era-preview-CocuDUm9.gif',
+    'https://motionsites.ai/assets/hero-wealth-preview-B70idl_u.gif',
+    'https://motionsites.ai/assets/hero-luminex-preview-CxOP7ce6.gif',
+    'https://motionsites.ai/assets/hero-celestia-preview-0yO3jXO8.gif'
+  ];
+
+  const tiles1 = gifs.slice(0, 11);
+  const tiles2 = gifs.slice(11);
 
   // Triple for seamless loop
   function buildRow(row, srcs) {
