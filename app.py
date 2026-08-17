@@ -55,15 +55,52 @@ def create_app():
     def sitemap():
         from flask import Response
         xml = """<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://praveenk.dev/</loc><priority>1.0</priority></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  <url>
+    <loc>https://praveen-kannan-4607.vercel.app/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://praveen-kannan-4607.vercel.app/#about</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://praveen-kannan-4607.vercel.app/#skills</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://praveen-kannan-4607.vercel.app/#experience</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://praveen-kannan-4607.vercel.app/#projects</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://praveen-kannan-4607.vercel.app/#contact</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>"""
         return Response(xml, mimetype="application/xml")
 
     @app.route("/robots.txt")
     def robots():
         from flask import Response
-        txt = "User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: /sitemap.xml"
+        txt = "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: https://praveen-kannan-4607.vercel.app/sitemap.xml\n"
         return Response(txt, mimetype="text/plain")
 
     # ── Error handlers ─────────────────────────────────────────────────────────
