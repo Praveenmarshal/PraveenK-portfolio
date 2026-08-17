@@ -12,8 +12,11 @@
     }
   ],
   "routes": [
-    { "src": "/static/(.*)", "dest": "/static/$1" },
-    { "src": "/(.*)",        "dest": "app.py"      }
+    { "src": "/sitemap.xml",                 "dest": "/static/sitemap.xml" },
+    { "src": "/robots.txt",                  "dest": "/static/robots.txt" },
+    { "src": "/google23b55cf734dd73b1.html", "dest": "/static/google23b55cf734dd73b1.html" },
+    { "src": "/static/(.*)",                 "dest": "/static/$1" },
+    { "src": "/(.*)",                        "dest": "app.py" }
   ],
   "env": {
     "FLASK_ENV": "production"
