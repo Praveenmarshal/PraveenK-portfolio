@@ -103,6 +103,11 @@ def create_app():
         txt = "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: https://praveen-kannan-4607.vercel.app/sitemap.xml\n"
         return Response(txt, mimetype="text/plain")
 
+    @app.route("/google23b55cf734dd73b1.html")
+    def google_verify():
+        from flask import Response
+        return Response("google-site-verification: google23b55cf734dd73b1.html", mimetype="text/html")
+
     # ── Error handlers ─────────────────────────────────────────────────────────
     @app.errorhandler(404)
     def not_found(e):
