@@ -12,6 +12,8 @@
     }
   ],
   "routes": [
+    { "src": "/api/resume",                  "dest": "/static/resume/Praveen_K_resume.pdf" },
+    { "src": "/resume",                      "dest": "/static/resume/Praveen_K_resume.pdf" },
     { "src": "/sitemap.xml",                 "dest": "/static/sitemap.xml" },
     { "src": "/robots.txt",                  "dest": "/static/robots.txt" },
     { "src": "/google23b55cf734dd73b1.html", "dest": "/static/google23b55cf734dd73b1.html" },

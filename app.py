@@ -108,6 +108,14 @@ def create_app():
         from flask import Response
         return Response("google-site-verification: google23b55cf734dd73b1.html", mimetype="text/html")
 
+    @app.route("/api/resume")
+    def api_resume():
+        from flask import send_from_directory
+        resume_dir = os.path.join(app.root_path, "static", "resume")
+        if os.path.exists(os.path.join(resume_dir, "Praveen_K_resume.pdf")):
+            return send_from_directory(resume_dir, "Praveen_K_resume.pdf", as_attachment=True, download_name="Praveen_K_Resume.pdf")
+        return send_from_directory(app.root_path, "Praveen_K_resume.pdf", as_attachment=True, download_name="Praveen_K_Resume.pdf")
+
     # ── Error handlers ─────────────────────────────────────────────────────────
     @app.errorhandler(404)
     def not_found(e):

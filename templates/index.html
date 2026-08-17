@@ -643,7 +643,7 @@
         <a href="mailto:praveenkicha01@gmail.com" class="social-link" title="Email">✉</a>
       </div>
       <div class="resume-cta">
-        <button class="contact-btn" onclick="downloadResumePDF()">⬇ Download Resume</button>
+        <a href="{{ url_for('static', filename='resume/Praveen_K_resume.pdf') }}" download="Praveen_K_Resume.pdf" target="_blank" class="contact-btn" style="text-decoration:none;display:inline-block;" onclick="downloadResumePDF()">⬇ Download Resume</a>
       </div>
     </div>
 

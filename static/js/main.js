@@ -480,18 +480,22 @@ function exportChatHistory() {
 
 /* ── RESUME DOWNLOAD ──────────────────────────────────────── */
 function downloadResumePDF() {
-  fetch('/api/resume')
-    .then(function(r) {
-      if (!r.ok) throw new Error('No resume');
-      return r.blob();
-    })
-    .then(function(blob) {
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'Praveen_K_Resume.pdf';
-      a.click();
-    })
-    .catch(function() {
-      alert('Resume not available at the moment. Please contact me directly.');
-    });
+  var a = document.createElement('a');
+  a.href = '/static/resume/Praveen_K_resume.pdf';
+  a.download = 'Praveen_K_Resume.pdf';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function() {
+    document.body.removeChild(a);
+  }, 100);
+
+  // Track event in analytics
+  try {
+    fetch('/api/analytics/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event: 'resume_download' })
+    }).catch(function() {});
+  } catch (e) {}
 }
