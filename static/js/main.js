@@ -252,6 +252,99 @@ window.addEventListener('scroll', function() {
   updateStacks();
 })();
 
+/* ── BLINDS TEXT REVEAL COMPONENT (Framer BlindsTextReveal) ── */
+(function initBlindsTextReveal() {
+  const elements = document.querySelectorAll('[data-blinds-reveal]');
+  if (!elements.length) return;
+
+  elements.forEach(function(el) {
+    if (el._blindsInitialised) return;
+    el._blindsInitialised = true;
+
+    const originalText = el.textContent.trim();
+    const blindsColor = el.dataset.blindsColor || '#7621B0';
+    const direction = el.dataset.blindsDir || 'left-to-right';
+    const stagger = parseFloat(el.dataset.blindsStagger) || 0.08;
+    const baseDelay = parseFloat(el.dataset.blindsDelay) || 0;
+    const trigger = el.dataset.blindsTrigger || 'scroll';
+
+    const words = originalText.split(/\s+/).filter(Boolean);
+    el.textContent = '';
+
+    const overlays = [];
+    const inners = [];
+
+    words.forEach(function(word, idx) {
+      const wrap = document.createElement('span');
+      wrap.className = 'blinds-line-wrap';
+      wrap.style.setProperty('--blinds-color', blindsColor);
+
+      const inner = document.createElement('span');
+      inner.className = 'blinds-text-inner';
+      inner.textContent = word;
+
+      const overlay = document.createElement('span');
+      overlay.className = 'blinds-overlay dir-' + direction;
+
+      wrap.appendChild(inner);
+      wrap.appendChild(overlay);
+      el.appendChild(wrap);
+
+      if (idx < words.length - 1) {
+        el.appendChild(document.createTextNode(' '));
+      }
+
+      overlays.push(overlay);
+      inners.push(inner);
+    });
+
+    let hasAnimated = false;
+
+    function playAnimation() {
+      if (hasAnimated) return;
+      hasAnimated = true;
+
+      overlays.forEach(function(overlay, i) {
+        const textInner = inners[i];
+        const delay = (baseDelay + i * stagger) * 1000;
+
+        setTimeout(function() {
+          overlay.style.transition = 'transform 0.42s cubic-bezier(0.77, 0, 0.175, 1)';
+          overlay.style.transform = 'translate(0, 0)';
+
+          setTimeout(function() {
+            textInner.style.opacity = '1';
+            overlay.style.transition = 'transform 0.42s cubic-bezier(0.25, 1, 0.5, 1)';
+            if (direction === 'left-to-right') {
+              overlay.style.transform = 'translateX(101%)';
+            } else if (direction === 'right-to-left') {
+              overlay.style.transform = 'translateX(-101%)';
+            } else if (direction === 'top-to-bottom') {
+              overlay.style.transform = 'translateY(101%)';
+            } else {
+              overlay.style.transform = 'translateY(-101%)';
+            }
+          }, 420);
+        }, delay);
+      });
+    }
+
+    if (trigger === 'appear') {
+      setTimeout(playAnimation, 300);
+    } else {
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            playAnimation();
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      observer.observe(el);
+    }
+  });
+})();
+
 /* ── MAGNETIC HOVER EFFECT ────────────────────────────────── */
 (function initMagnet() {
   document.querySelectorAll('[data-magnet]').forEach(function(el) {

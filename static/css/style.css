@@ -68,6 +68,50 @@ a{text-decoration:none;color:inherit}
 }
 .cursor-ring.hover{width:56px;height:56px;border-color:rgba(187,204,215,.7)}
 
+/* ── BLINDS TEXT REVEAL COMPONENT (Framer Style) ────────── */
+.blinds-line-wrap {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: inherit;
+  margin: 0;
+  padding: 0 4px;
+}
+
+.blinds-text-inner {
+  display: inline-block;
+  opacity: 0;
+  transition: opacity 0.05s ease-out;
+  transform: translateZ(0);
+}
+
+.blinds-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--blinds-color, #7621B0);
+  pointer-events: none;
+  z-index: 2;
+  transform: translateX(-101%);
+  will-change: transform;
+}
+
+.blinds-overlay.dir-left-to-right {
+  transform: translateX(-101%);
+}
+.blinds-overlay.dir-right-to-left {
+  transform: translateX(101%);
+}
+.blinds-overlay.dir-top-to-bottom {
+  transform: translateY(-101%);
+}
+.blinds-overlay.dir-bottom-to-top {
+  transform: translateY(101%);
+}
+
 /* ── BIDIRECTIONAL FADE & TEXT REVEAL ───────────────────── */
 [data-fade]{
   opacity:0;
