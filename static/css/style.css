@@ -252,7 +252,8 @@ a{text-decoration:none;color:inherit}
 /* ══════════════════════════════════════════════════════════
    ABOUT SECTION (Unmask Stage)
    ══════════════════════════════════════════════════════════ */
-.about-unmask-stage{
+.about-unmask-stage,
+#aboutStage{
   position:relative;
   min-height:180vh;
   z-index:3;
@@ -406,7 +407,8 @@ a{text-decoration:none;color:inherit}
 /* ══════════════════════════════════════════════════════════
    SKILLS & EXPERIENCE STAGE (Unmask Container)
    ══════════════════════════════════════════════════════════ */
-.skills-exp-unmask-stage{
+.skills-exp-unmask-stage,
+#skillsExpStage{
   position:relative;
   z-index:4;
   background:#FAFBFD;
