@@ -76,13 +76,12 @@ a{text-decoration:none;color:inherit}
   vertical-align: top;
   line-height: inherit;
   margin: 0;
-  padding: 0 4px;
+  padding: 0;
 }
 
 .blinds-text-inner {
-  display: inline-block;
-  opacity: 0;
-  transition: opacity 0.05s ease-out;
+  display: inline;
+  transition: opacity 0.08s ease-out;
   transform: translateZ(0);
 }
 

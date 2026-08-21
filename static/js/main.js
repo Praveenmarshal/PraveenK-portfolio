@@ -261,60 +261,77 @@ window.addEventListener('scroll', function() {
     if (el._blindsInitialised) return;
     el._blindsInitialised = true;
 
-    const originalText = el.textContent.trim();
     const blindsColor = el.dataset.blindsColor || '#7621B0';
     const direction = el.dataset.blindsDir || 'left-to-right';
-    const stagger = parseFloat(el.dataset.blindsStagger) || 0.08;
+    const stagger = parseFloat(el.dataset.blindsStagger) || 0.12;
     const baseDelay = parseFloat(el.dataset.blindsDelay) || 0;
-    const trigger = el.dataset.blindsTrigger || 'scroll';
-
-    const words = originalText.split(/\s+/).filter(Boolean);
-    el.textContent = '';
 
     const overlays = [];
     const inners = [];
 
-    words.forEach(function(word, idx) {
-      const wrap = document.createElement('span');
-      wrap.className = 'blinds-line-wrap';
-      wrap.style.setProperty('--blinds-color', blindsColor);
+    if (el.tagName === 'UL' || el.tagName === 'OL') {
+      const listItems = Array.from(el.querySelectorAll('li'));
+      listItems.forEach(function(li) {
+        const text = li.innerHTML;
+        li.innerHTML = `
+          <span class="blinds-line-wrap" style="--blinds-color:${blindsColor}; display:block; width:100%;">
+            <span class="blinds-text-inner">${text}</span>
+            <span class="blinds-overlay dir-${direction}"></span>
+          </span>
+        `;
+        const inner = li.querySelector('.blinds-text-inner');
+        const overlay = li.querySelector('.blinds-overlay');
+        if (inner && overlay) {
+          inner.style.opacity = '0';
+          inners.push(inner);
+          overlays.push(overlay);
+        }
+      });
+    } else {
+      const text = el.textContent.trim();
+      const sentences = text.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [text];
+      el.innerHTML = '';
 
-      const inner = document.createElement('span');
-      inner.className = 'blinds-text-inner';
-      inner.textContent = word;
+      sentences.forEach(function(sent) {
+        const wrap = document.createElement('span');
+        wrap.className = 'blinds-line-wrap';
+        wrap.style.setProperty('--blinds-color', blindsColor);
+        wrap.style.display = 'inline-block';
 
-      const overlay = document.createElement('span');
-      overlay.className = 'blinds-overlay dir-' + direction;
+        const inner = document.createElement('span');
+        inner.className = 'blinds-text-inner';
+        inner.textContent = sent;
+        inner.style.opacity = '0';
 
-      wrap.appendChild(inner);
-      wrap.appendChild(overlay);
-      el.appendChild(wrap);
+        const overlay = document.createElement('span');
+        overlay.className = 'blinds-overlay dir-' + direction;
 
-      if (idx < words.length - 1) {
-        el.appendChild(document.createTextNode(' '));
-      }
+        wrap.appendChild(inner);
+        wrap.appendChild(overlay);
+        el.appendChild(wrap);
 
-      overlays.push(overlay);
-      inners.push(inner);
-    });
+        overlays.push(overlay);
+        inners.push(inner);
+      });
+    }
 
-    let hasAnimated = false;
+    let animated = false;
 
     function playAnimation() {
-      if (hasAnimated) return;
-      hasAnimated = true;
+      if (animated) return;
+      animated = true;
 
       overlays.forEach(function(overlay, i) {
         const textInner = inners[i];
         const delay = (baseDelay + i * stagger) * 1000;
 
         setTimeout(function() {
-          overlay.style.transition = 'transform 0.42s cubic-bezier(0.77, 0, 0.175, 1)';
+          overlay.style.transition = 'transform 0.45s cubic-bezier(0.77, 0, 0.175, 1)';
           overlay.style.transform = 'translate(0, 0)';
 
           setTimeout(function() {
             textInner.style.opacity = '1';
-            overlay.style.transition = 'transform 0.42s cubic-bezier(0.25, 1, 0.5, 1)';
+            overlay.style.transition = 'transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)';
             if (direction === 'left-to-right') {
               overlay.style.transform = 'translateX(101%)';
             } else if (direction === 'right-to-left') {
@@ -329,19 +346,22 @@ window.addEventListener('scroll', function() {
       });
     }
 
-    if (trigger === 'appear') {
-      setTimeout(playAnimation, 300);
-    } else {
-      const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            playAnimation();
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.15 });
-      observer.observe(el);
-    }
+    // Safety fallback: ensure text is visible even if observer fails
+    setTimeout(function() {
+      inners.forEach(function(inner) {
+        inner.style.opacity = '1';
+      });
+    }, 3500);
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          playAnimation();
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '60px 0px -30px 0px', threshold: 0.1 });
+    observer.observe(el);
   });
 })();
 
