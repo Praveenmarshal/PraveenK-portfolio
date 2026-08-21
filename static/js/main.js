@@ -319,14 +319,25 @@ window.addEventListener('scroll', function() {
       textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
       
       const isDesktop = window.innerWidth >= 1024;
-      const targetFontSize = isDesktop ? Math.min(textCanvas.width * 0.26, textCanvas.height * 0.78) : Math.min(textCanvas.width * 0.18, textCanvas.height * 0.82);
-      textCtx.font = '900 ' + targetFontSize + 'px Kanit, sans-serif';
+      const paddingX = isDesktop ? 4 * dpr : 12 * dpr;
+      const maxAvailableWidth = canvas.width - (paddingX * 2);
+      
+      // Auto-fit font size based on string length and container width
+      let fontSize = isDesktop ? Math.round(canvas.height * 0.68) : Math.round(canvas.height * 0.72);
+      textCtx.font = '900 ' + fontSize + 'px Kanit, sans-serif';
+      textCtx.letterSpacing = '-0.03em';
+      
+      let measured = textCtx.measureText(text.toUpperCase()).width;
+      if (measured > maxAvailableWidth) {
+        fontSize = Math.floor(fontSize * (maxAvailableWidth / measured));
+        textCtx.font = '900 ' + fontSize + 'px Kanit, sans-serif';
+      }
+
       textCtx.fillStyle = '#0C0C0C';
       textCtx.textAlign = isDesktop ? 'left' : 'center';
       textCtx.textBaseline = 'middle';
-      textCtx.letterSpacing = '-0.03em';
-      
-      const textX = isDesktop ? 6 * dpr : textCanvas.width / 2;
+
+      const textX = isDesktop ? paddingX : textCanvas.width / 2;
       textCtx.fillText(text.toUpperCase(), textX, textCanvas.height / 2);
 
       gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -340,11 +351,11 @@ window.addEventListener('scroll', function() {
     function onResize() {
       const isDesktop = window.innerWidth >= 1024;
       wrapper.style.justifyContent = isDesktop ? 'flex-start' : 'center';
-      wrapper.style.marginBottom = isDesktop ? '16px' : '28px';
+      wrapper.style.marginBottom = isDesktop ? '14px' : '28px';
 
       const rect = wrapper.getBoundingClientRect();
-      const w = rect.width || (isDesktop ? 360 : window.innerWidth);
-      const h = isDesktop ? Math.max(90, Math.min(140, w * 0.32)) : Math.max(120, Math.min(200, w * 0.22));
+      const w = rect.width || (isDesktop ? 380 : window.innerWidth);
+      const h = isDesktop ? Math.max(76, Math.min(120, w * 0.25)) : Math.max(90, Math.min(160, w * 0.2));
       renderTextToTexture(w, h);
     }
 
