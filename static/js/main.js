@@ -136,6 +136,89 @@ window.addEventListener('scroll', function() {
   });
 })();
 
+/* ── SCROLL TEXT & CARD DISTORTION (KINETIC WAVE & LIQUID PHYSICS) ── */
+(function initScrollTextDistortion() {
+  const sections = document.querySelectorAll('#skills, #experience');
+  if (!sections.length) return;
+
+  // Split headings into individual characters for fluid wave distortion
+  const headings = document.querySelectorAll('#skills .skills-heading, #experience .skills-heading');
+  headings.forEach(function(h) {
+    const rawText = h.textContent.trim();
+    h.innerHTML = '';
+    h.classList.add('distort-text-target');
+    for (let i = 0; i < rawText.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'distort-char';
+      span.textContent = rawText[i] === ' ' ? '\u00A0' : rawText[i];
+      span.dataset.index = i;
+      h.appendChild(span);
+    }
+  });
+
+  let lastScroll = window.pageYOffset || document.documentElement.scrollTop;
+  let scrollVelocity = 0;
+  let targetVelocity = 0;
+  let time = 0;
+
+  function lerp(a, b, n) {
+    return (1 - n) * a + n * b;
+  }
+
+  function onScroll() {
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    targetVelocity = currentScroll - lastScroll;
+    lastScroll = currentScroll;
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  function renderDistortion() {
+    scrollVelocity = lerp(scrollVelocity, targetVelocity, 0.12);
+    targetVelocity = lerp(targetVelocity, 0, 0.1);
+    time += 0.035;
+
+    let active = false;
+    sections.forEach(function(sec) {
+      const rect = sec.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      if (rect.bottom > -100 && rect.top < vh + 100) {
+        active = true;
+      }
+    });
+
+    if (active || Math.abs(scrollVelocity) > 0.05) {
+      const clampedVel = Math.max(-35, Math.min(35, scrollVelocity));
+      const skewAngle = (clampedVel * 0.14).toFixed(2);
+      const stretchScale = (1 + Math.min(Math.abs(clampedVel) * 0.003, 0.06)).toFixed(3);
+      const chromatic = Math.min(Math.abs(clampedVel) * 0.18, 4.5);
+
+      sections.forEach(function(sec) {
+        sec.style.setProperty('--distort-skew', skewAngle + 'deg');
+        sec.style.setProperty('--distort-scale', stretchScale);
+        sec.style.setProperty('--distort-chromatic', chromatic.toFixed(1) + 'px');
+      });
+
+      const chars = document.querySelectorAll('#skills .distort-char, #experience .distort-char');
+      chars.forEach(function(c) {
+        const idx = parseInt(c.dataset.index) || 0;
+        const wave = (Math.sin(time * 3.2 + idx * 0.4) * (Math.abs(clampedVel) * 0.35)).toFixed(2);
+        const charSkew = (clampedVel * 0.09).toFixed(2);
+        c.style.transform = 'translateY(' + wave + 'px) skewX(' + charSkew + 'deg)';
+        if (chromatic > 0.4) {
+          c.style.textShadow = (-chromatic).toFixed(1) + 'px 0 rgba(182,0,168,0.7), ' + chromatic.toFixed(1) + 'px 0 rgba(0,220,255,0.7)';
+        } else {
+          c.style.textShadow = 'none';
+        }
+      });
+    }
+
+    requestAnimationFrame(renderDistortion);
+  }
+
+  requestAnimationFrame(renderDistortion);
+})();
+
 /* ── MAGNETIC HOVER EFFECT ────────────────────────────────── */
 (function initMagnet() {
   document.querySelectorAll('[data-magnet]').forEach(function(el) {
