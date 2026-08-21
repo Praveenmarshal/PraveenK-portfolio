@@ -626,7 +626,7 @@ a{text-decoration:none;color:inherit}
 
 .skills-list{
   max-width:100%;margin:0;
-  display:flex;flex-direction:column;gap:24px;
+  display:flex;flex-direction:column;gap:80px;
   position:relative;z-index:2;
 }
 
@@ -638,7 +638,7 @@ a{text-decoration:none;color:inherit}
   backdrop-filter:blur(20px);
   border:1px solid rgba(12,12,12,.08);
   border-radius:28px;
-  box-shadow:0 8px 30px rgba(12,12,12,.03);
+  box-shadow:0 10px 40px rgba(12,12,12,.08);
   transition:all .4s cubic-bezier(.22,1,.36,1);
 }
 @media(min-width:640px){.skill-item{gap:32px;padding:36px 36px}}
@@ -764,11 +764,11 @@ a{text-decoration:none;color:inherit}
 .experience-timeline{
   position:relative;
   max-width:100%;margin:0;
-  display:flex;flex-direction:column;gap:32px;
+  display:flex;flex-direction:column;gap:80px;
   padding-left:36px;
   position:relative;z-index:2;
 }
-@media(min-width:640px){.experience-timeline{padding-left:48px;gap:40px}}
+@media(min-width:640px){.experience-timeline{padding-left:48px;gap:80px}}
 
 .timeline-spine{
   position:absolute;left:11px;top:24px;bottom:32px;
@@ -813,7 +813,7 @@ a{text-decoration:none;color:inherit}
   background:rgba(255,255,255,.9);
   backdrop-filter:blur(20px);
   border:1px solid rgba(12,12,12,.08);
-  box-shadow:0 8px 30px rgba(12,12,12,.03);
+  box-shadow:0 10px 40px rgba(12,12,12,.08);
   transition:all .4s cubic-bezier(.22,1,.36,1);
 }
 @media(min-width:640px){.exp-card{padding:36px 36px}}

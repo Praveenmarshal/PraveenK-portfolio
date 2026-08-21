@@ -190,6 +190,113 @@ window.addEventListener('scroll', function() {
   requestTick();
 })();
 
+/* ── SCROLL STACK ANIMATION (Skills & Experience Cards) ────── */
+(function initScrollStack() {
+  var PIN_TOP_PCT   = 20;
+  var STACK_GAP     = 14;
+  var SCALE_PER_LVL = 0.035;
+  var DIM_PER_LVL   = 0.08;
+  var MIN_SCALE     = 0.84;
+  var MIN_BRIGHT    = 0.55;
+
+  function initStack(containerSel, cardSel) {
+    var container = document.querySelector(containerSel);
+    if (!container) return null;
+    var cards = Array.from(container.querySelectorAll(cardSel));
+    if (cards.length < 2) return null;
+
+    cards.forEach(function(c) {
+      c.style.willChange = 'transform, filter';
+      c.style.transformOrigin = 'top center';
+      c.style.backfaceVisibility = 'hidden';
+    });
+
+    return { cards: cards, tops: [] };
+  }
+
+  var stacks = [
+    initStack('.skills-list', '.skill-item'),
+    initStack('.experience-timeline', '.exp-item')
+  ].filter(Boolean);
+
+  if (!stacks.length) return;
+
+  function cacheTops() {
+    var sy = window.scrollY || window.pageYOffset;
+    stacks.forEach(function(s) {
+      s.cards.forEach(function(c) {
+        c._savedTF = c.style.transform;
+        c._savedFL = c.style.filter;
+        c.style.transform = 'none';
+        c.style.filter = 'none';
+      });
+      s.tops = s.cards.map(function(c) {
+        return c.getBoundingClientRect().top + sy;
+      });
+      s.cards.forEach(function(c) {
+        c.style.transform = c._savedTF || '';
+        c.style.filter = c._savedFL || '';
+      });
+    });
+  }
+
+  cacheTops();
+
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() { cacheTops(); tick(); }, 150);
+  });
+
+  setTimeout(cacheTops, 2500);
+
+  var ticking = false;
+
+  function tick() {
+    var sy = window.scrollY || window.pageYOffset;
+    var vh = window.innerHeight;
+    var pinLine = sy + vh * PIN_TOP_PCT / 100;
+
+    stacks.forEach(function(s) {
+      var cards = s.cards;
+      var tops  = s.tops;
+      var n     = cards.length;
+
+      for (var i = 0; i < n; i++) {
+        var card = cards[i];
+        var origTop = tops[i];
+
+        if (origTop <= pinLine) {
+          var depth = 0;
+          for (var j = i + 1; j < n; j++) {
+            if (tops[j] <= pinLine) depth++;
+          }
+
+          var pinY = pinLine - origTop - depth * STACK_GAP;
+          var scale = Math.max(MIN_SCALE, 1 - depth * SCALE_PER_LVL);
+          var bright = Math.max(MIN_BRIGHT, 1 - depth * DIM_PER_LVL);
+
+          card.style.transform = 'translateY(' + pinY.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')';
+          card.style.filter = 'brightness(' + bright.toFixed(2) + ')';
+          card.style.zIndex = String(n + 10 - depth);
+        } else {
+          card.style.transform = '';
+          card.style.filter = '';
+          card.style.zIndex = '';
+        }
+      }
+    });
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) { requestAnimationFrame(tick); ticking = true; }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
 /* ── MAGNETIC HOVER EFFECT ────────────────────────────────── */
 (function initMagnet() {
   document.querySelectorAll('[data-magnet]').forEach(function(el) {
