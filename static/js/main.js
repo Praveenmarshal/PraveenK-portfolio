@@ -138,6 +138,59 @@ window.addEventListener('scroll', function() {
 
 
 
+/* ── UNMASK SECTIONS ON SCROLL (FRAMER LAYERED CURTAIN EFFECT) ── */
+(function initUnmaskSectionsOnScroll() {
+  const sections = [
+    document.getElementById('hero'),
+    document.getElementById('about'),
+    document.getElementById('skills'),
+    document.getElementById('experience'),
+    document.getElementById('projects'),
+    document.getElementById('contact')
+  ].filter(Boolean);
+
+  if (sections.length < 2) return;
+
+  let ticking = false;
+
+  function updateUnmaskParallax() {
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+
+    for (let i = 0; i < sections.length - 1; i++) {
+      const current = sections[i];
+      const next = sections[i + 1];
+      const nextRect = next.getBoundingClientRect();
+
+      // When the next section is rolling up and unmasking over the current section
+      if (nextRect.top < vh && nextRect.top > -vh) {
+        const unmaskProgress = Math.max(0, Math.min(1, (vh - nextRect.top) / (vh * 0.95)));
+        const scale = (1 - unmaskProgress * 0.045).toFixed(3);
+        const translateY = (unmaskProgress * -25).toFixed(1);
+        const brightness = (1 - unmaskProgress * 0.18).toFixed(2);
+
+        current.style.transform = 'scale(' + scale + ') translateY(' + translateY + 'px)';
+        current.style.filter = 'brightness(' + brightness + ')';
+      } else if (nextRect.top >= vh) {
+        current.style.transform = 'scale(1) translateY(0px)';
+        current.style.filter = 'brightness(1)';
+      }
+    }
+
+    ticking = false;
+  }
+
+  function requestTick() {
+    if (!ticking) {
+      requestAnimationFrame(updateUnmaskParallax);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', requestTick, { passive: true });
+  window.addEventListener('resize', requestTick, { passive: true });
+  requestTick();
+})();
+
 /* ── MAGNETIC HOVER EFFECT ────────────────────────────────── */
 (function initMagnet() {
   document.querySelectorAll('[data-magnet]').forEach(function(el) {

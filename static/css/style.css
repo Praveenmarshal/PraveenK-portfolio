@@ -87,13 +87,16 @@ a{text-decoration:none;color:inherit}
    HERO SECTION
    ══════════════════════════════════════════════════════════ */
 .hero-section{
-  position:relative;z-index:2;
+  position:relative;z-index:1;
   height:100vh;
   height:100dvh;
   min-height:560px;
   display:flex;flex-direction:column;
   padding:0 20px;
   overflow-x:clip;
+  transform-origin:center top;
+  will-change:transform, filter;
+  transition:transform .12s cubic-bezier(0.2, 0.9, 0.3, 1), filter .12s ease-out;
 }
 @media(min-width:640px){.hero-section{padding:0 28px;min-height:620px}}
 @media(min-width:768px){.hero-section{padding:0 40px}}
@@ -254,6 +257,13 @@ a{text-decoration:none;color:inherit}
   padding:100px 24px;
   background:#0C0C0C;
   overflow:hidden;
+  margin-top:-60px;
+  border-radius:clamp(36px,5vw,64px) clamp(36px,5vw,64px) 0 0;
+  box-shadow:0 -28px 70px rgba(0,0,0,0.85);
+  border-top:1px solid rgba(215,226,234,.12);
+  transform-origin:center top;
+  will-change:transform, filter;
+  transition:transform .12s cubic-bezier(0.2, 0.9, 0.3, 1), filter .12s ease-out;
 }
 @media(min-width:640px){.about-section{padding:120px 32px}}
 @media(min-width:768px){.about-section{padding:140px 40px}}
@@ -392,13 +402,19 @@ a{text-decoration:none;color:inherit}
 .skills-section{
   position:relative;z-index:3;
   background:#FAFBFD;
-  border-radius:40px 40px 0 0;
+  border-radius:clamp(36px,5vw,64px) clamp(36px,5vw,64px) 0 0;
   padding:80px 20px;
   color:#0C0C0C;
   overflow:visible;
+  margin-top:-60px;
+  box-shadow:0 -28px 70px rgba(0,0,0,0.45);
+  border-top:1px solid rgba(118,33,176,.15);
+  transform-origin:center top;
+  will-change:transform, filter;
+  transition:transform .12s cubic-bezier(0.2, 0.9, 0.3, 1), filter .12s ease-out;
 }
-@media(min-width:640px){.skills-section{border-radius:50px 50px 0 0;padding:96px 32px}}
-@media(min-width:768px){.skills-section{border-radius:60px 60px 0 0;padding:128px 40px}}
+@media(min-width:640px){.skills-section{padding:96px 32px}}
+@media(min-width:768px){.skills-section{padding:128px 40px}}
 
 /* Ambient Glow Orbs */
 .skills-ambient-orb{
@@ -720,11 +736,14 @@ a{text-decoration:none;color:inherit}
    EXPERIENCE SECTION (Animated Timeline)
    ══════════════════════════════════════════════════════════ */
 .experience-section{
-  position:relative;z-index:3;
+  position:relative;z-index:4;
   background:#FAFBFD;
   padding:0 20px 100px;
   color:#0C0C0C;
   overflow:visible;
+  transform-origin:center top;
+  will-change:transform, filter;
+  transition:transform .12s cubic-bezier(0.2, 0.9, 0.3, 1), filter .12s ease-out;
 }
 @media(min-width:640px){.experience-section{padding:0 32px 120px}}
 @media(min-width:768px){.experience-section{padding:0 40px 140px}}
@@ -837,14 +856,19 @@ a{text-decoration:none;color:inherit}
    PROJECTS SECTION
    ══════════════════════════════════════════════════════════ */
 .projects-section{
-  position:relative;z-index:4;
+  position:relative;z-index:5;
   background:#0C0C0C;
-  border-radius:40px 40px 0 0;
+  border-radius:clamp(36px,5vw,64px) clamp(36px,5vw,64px) 0 0;
   padding:80px 20px 40px;
-  margin-top:-40px;
+  margin-top:-60px;
+  box-shadow:0 -35px 90px rgba(0,0,0,0.9);
+  border-top:1px solid rgba(215,226,234,.12);
+  transform-origin:center top;
+  will-change:transform, filter;
+  transition:transform .12s cubic-bezier(0.2, 0.9, 0.3, 1), filter .12s ease-out;
 }
-@media(min-width:640px){.projects-section{border-radius:50px 50px 0 0;padding:96px 32px 40px;margin-top:-48px}}
-@media(min-width:768px){.projects-section{border-radius:60px 60px 0 0;padding:128px 40px 40px;margin-top:-56px}}
+@media(min-width:640px){.projects-section{padding:96px 32px 40px;}}
+@media(min-width:768px){.projects-section{padding:128px 40px 40px;}}
 
 .projects-heading{
   font-size:clamp(3rem,12vw,160px);
@@ -974,9 +998,16 @@ a{text-decoration:none;color:inherit}
    CONTACT SECTION
    ══════════════════════════════════════════════════════════ */
 .contact-section{
-  position:relative;z-index:5;
+  position:relative;z-index:6;
   background:#0C0C0C;
   padding:80px 20px;
+  margin-top:-60px;
+  border-radius:clamp(36px,5vw,64px) clamp(36px,5vw,64px) 0 0;
+  box-shadow:0 -35px 90px rgba(0,0,0,0.95);
+  border-top:1px solid rgba(215,226,234,.15);
+  transform-origin:center top;
+  will-change:transform, filter;
+  transition:transform .12s cubic-bezier(0.2, 0.9, 0.3, 1), filter .12s ease-out;
 }
 @media(min-width:640px){.contact-section{padding:96px 32px}}
 @media(min-width:768px){.contact-section{padding:128px 40px}}
