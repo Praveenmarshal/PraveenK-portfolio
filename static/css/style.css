@@ -497,17 +497,13 @@ a{text-decoration:none;color:inherit}
   }
 }
 
-.sticky-header-content .skills-heading,
-.sticky-header-content .webgl-text-distort-wrap{
+.sticky-header-content .skills-heading{
   text-align:left;
   margin-bottom:20px;
-  justify-content:flex-start;
 }
 @media(max-width:1023px){
-  .sticky-header-content .skills-heading,
-  .sticky-header-content .webgl-text-distort-wrap{
+  .sticky-header-content .skills-heading{
     text-align:center;
-    justify-content:center;
     margin-bottom:24px;
   }
 }
@@ -582,32 +578,18 @@ a{text-decoration:none;color:inherit}
 
 .skills-heading{
   color:#0C0C0C;
+  font-family:'Kanit', sans-serif;
   font-weight:900;text-transform:uppercase;text-align:left;
-  font-size:clamp(3rem,8vw,110px);
-  letter-spacing:-0.03em;line-height:0.9;
-  margin-bottom:24px;position:relative;z-index:2;
-  will-change:transform, text-shadow;
-  transform:skewY(var(--distort-skew, 0deg)) scaleY(var(--distort-scale, 1));
-  transition:transform .12s cubic-bezier(0.2, 0.9, 0.3, 1);
+  font-size:clamp(2.6rem, 5.5vw, 76px);
+  letter-spacing:-0.03em;line-height:0.95;
+  margin-bottom:20px;position:relative;z-index:2;
 }
 @media(max-width:1023px){
   .skills-heading{
     text-align:center;
-    font-size:clamp(2.8rem,10vw,120px);
-    margin-bottom:32px;
+    font-size:clamp(2.4rem, 8vw, 64px);
+    margin-bottom:24px;
   }
-}
-
-/* Scroll Text Distortion Character Splits */
-.distort-text-target{
-  display:inline-block;
-  will-change:transform;
-}
-.distort-char{
-  display:inline-block;
-  white-space:pre;
-  will-change:transform, text-shadow;
-  transition:transform .08s ease-out, text-shadow .08s ease-out;
 }
 
 .skills-list{
@@ -616,7 +598,7 @@ a{text-decoration:none;color:inherit}
   position:relative;z-index:2;
 }
 
-/* Skill Item Glass Card with Kinetic Wave Physics */
+/* Skill Item Glass Card */
 .skill-item{
   display:flex;align-items:flex-start;gap:24px;
   padding:32px 28px;
@@ -625,16 +607,14 @@ a{text-decoration:none;color:inherit}
   border:1px solid rgba(12,12,12,.08);
   border-radius:28px;
   box-shadow:0 8px 30px rgba(12,12,12,.03);
-  will-change:transform;
-  transform:skewY(calc(var(--distort-skew, 0deg) * 0.32)) scaleY(var(--distort-scale, 1));
-  transition:background .4s, border-color .4s, box-shadow .4s, transform .14s cubic-bezier(0.2, 0.9, 0.3, 1);
+  transition:all .4s cubic-bezier(.22,1,.36,1);
 }
 @media(min-width:640px){.skill-item{gap:32px;padding:36px 36px}}
 @media(min-width:768px){.skill-item{gap:40px;padding:40px 44px}}
 
 .skill-item:hover{
   background:#FFFFFF;
-  transform:translateY(-6px) scale(1.008)!important;
+  transform:translateY(-6px) scale(1.008);
   border-color:rgba(118,33,176,.3);
   box-shadow:0 24px 50px rgba(118,33,176,.1),0 4px 12px rgba(12,12,12,.04);
 }
@@ -802,15 +782,13 @@ a{text-decoration:none;color:inherit}
   backdrop-filter:blur(20px);
   border:1px solid rgba(12,12,12,.08);
   box-shadow:0 8px 30px rgba(12,12,12,.03);
-  will-change:transform;
-  transform:skewY(calc(var(--distort-skew, 0deg) * 0.32)) scaleY(var(--distort-scale, 1));
-  transition:background .4s, border-color .4s, box-shadow .4s, transform .14s cubic-bezier(0.2, 0.9, 0.3, 1);
+  transition:all .4s cubic-bezier(.22,1,.36,1);
 }
 @media(min-width:640px){.exp-card{padding:36px 36px}}
 
 .exp-card:hover{
   background:#FFFFFF;
-  transform:translateY(-4px)!important;
+  transform:translateY(-4px);
   border-color:rgba(118,33,176,.3);
   box-shadow:0 24px 50px rgba(118,33,176,.1),0 4px 12px rgba(12,12,12,.04);
 }
