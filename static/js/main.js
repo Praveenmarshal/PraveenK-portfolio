@@ -318,13 +318,16 @@ window.addEventListener('scroll', function() {
 
       textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
       
-      const targetFontSize = Math.min(textCanvas.width * 0.18, textCanvas.height * 0.82);
+      const isDesktop = window.innerWidth >= 1024;
+      const targetFontSize = isDesktop ? Math.min(textCanvas.width * 0.26, textCanvas.height * 0.78) : Math.min(textCanvas.width * 0.18, textCanvas.height * 0.82);
       textCtx.font = '900 ' + targetFontSize + 'px Kanit, sans-serif';
       textCtx.fillStyle = '#0C0C0C';
-      textCtx.textAlign = 'center';
+      textCtx.textAlign = isDesktop ? 'left' : 'center';
       textCtx.textBaseline = 'middle';
       textCtx.letterSpacing = '-0.03em';
-      textCtx.fillText(text.toUpperCase(), textCanvas.width / 2, textCanvas.height / 2);
+      
+      const textX = isDesktop ? 6 * dpr : textCanvas.width / 2;
+      textCtx.fillText(text.toUpperCase(), textX, textCanvas.height / 2);
 
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -335,9 +338,13 @@ window.addEventListener('scroll', function() {
     }
 
     function onResize() {
+      const isDesktop = window.innerWidth >= 1024;
+      wrapper.style.justifyContent = isDesktop ? 'flex-start' : 'center';
+      wrapper.style.marginBottom = isDesktop ? '16px' : '28px';
+
       const rect = wrapper.getBoundingClientRect();
-      const w = rect.width || window.innerWidth;
-      const h = Math.max(130, Math.min(240, w * 0.21));
+      const w = rect.width || (isDesktop ? 360 : window.innerWidth);
+      const h = isDesktop ? Math.max(90, Math.min(140, w * 0.32)) : Math.max(120, Math.min(200, w * 0.22));
       renderTextToTexture(w, h);
     }
 
