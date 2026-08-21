@@ -190,111 +190,66 @@ window.addEventListener('scroll', function() {
   requestTick();
 })();
 
-/* ── SCROLL STACK ANIMATION (Skills & Experience Cards) ────── */
+/* ── SCROLL STACK ANIMATION (React Bits Stacking Cards) ────── */
 (function initScrollStack() {
-  var PIN_TOP_PCT   = 20;
-  var STACK_GAP     = 14;
-  var SCALE_PER_LVL = 0.035;
-  var DIM_PER_LVL   = 0.08;
-  var MIN_SCALE     = 0.84;
-  var MIN_BRIGHT    = 0.55;
-
-  function initStack(containerSel, cardSel) {
-    var container = document.querySelector(containerSel);
-    if (!container) return null;
-    var cards = Array.from(container.querySelectorAll(cardSel));
-    if (cards.length < 2) return null;
-
-    cards.forEach(function(c) {
-      c.style.willChange = 'transform, filter';
-      c.style.transformOrigin = 'top center';
-      c.style.backfaceVisibility = 'hidden';
-    });
-
-    return { cards: cards, tops: [] };
-  }
-
-  var stacks = [
-    initStack('.skills-list', '.skill-item'),
-    initStack('.experience-timeline', '.exp-item')
-  ].filter(Boolean);
+  const stacks = [
+    { container: document.querySelector('.skills-list'), cards: Array.from(document.querySelectorAll('.skills-list .skill-item')) },
+    { container: document.querySelector('.experience-timeline'), cards: Array.from(document.querySelectorAll('.experience-timeline .exp-item')) }
+  ].filter(function(s) { return s.container && s.cards.length > 1; });
 
   if (!stacks.length) return;
 
-  function cacheTops() {
-    var sy = window.scrollY || window.pageYOffset;
-    stacks.forEach(function(s) {
-      s.cards.forEach(function(c) {
-        c._savedTF = c.style.transform;
-        c._savedFL = c.style.filter;
-        c.style.transform = 'none';
-        c.style.filter = 'none';
+  let ticking = false;
+
+  function updateStacks() {
+    stacks.forEach(function(stack) {
+      const cards = stack.cards;
+      const n = cards.length;
+
+      const stickyTops = cards.map(function(card, idx) {
+        return 95 + idx * 20;
       });
-      s.tops = s.cards.map(function(c) {
-        return c.getBoundingClientRect().top + sy;
+
+      const currentTops = cards.map(function(card) {
+        return card.getBoundingClientRect().top;
       });
-      s.cards.forEach(function(c) {
-        c.style.transform = c._savedTF || '';
-        c.style.filter = c._savedFL || '';
-      });
-    });
-  }
 
-  cacheTops();
+      cards.forEach(function(card, i) {
+        let totalDepthEffect = 0;
 
-  var resizeTimer;
-  window.addEventListener('resize', function() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() { cacheTops(); tick(); }, 150);
-  });
+        for (let j = i + 1; j < n; j++) {
+          const targetTop = stickyTops[j];
+          const actualTop = currentTops[j];
 
-  setTimeout(cacheTops, 2500);
-
-  var ticking = false;
-
-  function tick() {
-    var sy = window.scrollY || window.pageYOffset;
-    var vh = window.innerHeight;
-    var pinLine = sy + vh * PIN_TOP_PCT / 100;
-
-    stacks.forEach(function(s) {
-      var cards = s.cards;
-      var tops  = s.tops;
-      var n     = cards.length;
-
-      for (var i = 0; i < n; i++) {
-        var card = cards[i];
-        var origTop = tops[i];
-
-        if (origTop <= pinLine) {
-          var depth = 0;
-          for (var j = i + 1; j < n; j++) {
-            if (tops[j] <= pinLine) depth++;
+          if (actualTop <= targetTop) {
+            totalDepthEffect += 1.0;
+          } else if (actualTop < targetTop + 180) {
+            const progress = (targetTop + 180 - actualTop) / 180;
+            totalDepthEffect += progress;
           }
-
-          var pinY = pinLine - origTop - depth * STACK_GAP;
-          var scale = Math.max(MIN_SCALE, 1 - depth * SCALE_PER_LVL);
-          var bright = Math.max(MIN_BRIGHT, 1 - depth * DIM_PER_LVL);
-
-          card.style.transform = 'translateY(' + pinY.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')';
-          card.style.filter = 'brightness(' + bright.toFixed(2) + ')';
-          card.style.zIndex = String(n + 10 - depth);
-        } else {
-          card.style.transform = '';
-          card.style.filter = '';
-          card.style.zIndex = '';
         }
-      }
+
+        const scale = Math.max(0.82, 1 - totalDepthEffect * 0.038).toFixed(3);
+        const brightness = Math.max(0.55, 1 - totalDepthEffect * 0.08).toFixed(2);
+
+        card.style.transform = 'scale(' + scale + ')';
+        card.style.filter = 'brightness(' + brightness + ')';
+      });
     });
+
     ticking = false;
   }
 
   function onScroll() {
-    if (!ticking) { requestAnimationFrame(tick); ticking = true; }
+    if (!ticking) {
+      requestAnimationFrame(updateStacks);
+      ticking = true;
+    }
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  window.addEventListener('resize', onScroll, { passive: true });
+  updateStacks();
 })();
 
 /* ── MAGNETIC HOVER EFFECT ────────────────────────────────── */
