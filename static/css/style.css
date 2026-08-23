@@ -992,13 +992,13 @@ a{text-decoration:none;color:inherit}
 /* Section Header */
 .dna-heading{
   position:absolute;
-  top:clamp(20px,5vh,50px);
+  top:clamp(16px,3.5vh,38px);
   left:50%;
   transform:translateX(-50%);
   z-index:30;
   white-space:nowrap;
   margin:0;
-  font-size:clamp(2.5rem,8vw,110px);
+  font-size:clamp(2.2rem,7vw,90px);
   text-align:center;
   pointer-events:none;
 }
@@ -1006,11 +1006,11 @@ a{text-decoration:none;color:inherit}
 /* Scroll hint */
 .dna-subtitle{
   position:absolute;
-  bottom:24px;
+  bottom:20px;
   left:50%;
   transform:translateX(-50%);
   z-index:30;
-  font-size:.78rem;
+  font-size:.75rem;
   color:rgba(215,226,234,.4);
   letter-spacing:.16em;
   text-transform:uppercase;
@@ -1025,11 +1025,11 @@ a{text-decoration:none;color:inherit}
 /* -- DNA Central Double Helix Spine ----------------------- */
 .dna-helix{
   position:absolute;
-  top:50%;
+  top:56%;
   left:50%;
   transform:translate(-50%,-50%);
   width:70px;
-  height:70vh;
+  height:65vh;
   pointer-events:none;
   z-index:5;
 }
@@ -1058,7 +1058,7 @@ a{text-decoration:none;color:inherit}
 /* -- 3D Card Scene ---------------------------------------- */
 .dna-scene{
   position:absolute;
-  top:54%;
+  top:58%;
   left:50%;
   width:0;
   height:0;

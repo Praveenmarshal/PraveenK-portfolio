@@ -673,12 +673,12 @@ window.addEventListener('scroll', function() {
 
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
-      var angle = i * ANGLE_STEP + currentRot;
+      var angle = i * ANGLE_STEP - currentRot;
       var rad = angle * Math.PI / 180;
 
       var x = Math.sin(rad) * R;
       var z = Math.cos(rad) * R;
-      var y = (i - (TOTAL - 1) / 2) * VS + Math.sin(rad) * 16;
+      var y = (i - (TOTAL - 1) / 2) * VS * 0.45 + Math.sin(rad) * 14;
 
       var dist = PERSP - z;
       var scale = PERSP / Math.max(150, dist);
@@ -702,7 +702,7 @@ window.addEventListener('scroll', function() {
       var cx = 35;
       for (var j = 0; j < helixNodes.length; j++) {
         var nd = helixNodes[j];
-        var na = nd._ba + currentRot;
+        var na = nd._ba - currentRot;
         var nr = na * Math.PI / 180;
         var d2 = (Math.cos(nr) + 1) * 0.5;
         var ny = nd._t * hH;
