@@ -587,15 +587,15 @@ window.addEventListener('scroll', function() {
   var TOTAL = PROJECTS.length;
   var ANGLE_STEP = 360 / TOTAL;
   var FULL_ROT   = 720;
-  var PERSP      = 1300;
-  var LERP       = 0.06;
+  var PERSP      = 1200;
+  var LERP       = 0.085;
   var currentRot = 0;
   var targetRot  = 0;
   var rafId      = 0;
   var cards      = [];
 
-  function getRadius()  { return Math.max(180, Math.min(window.innerWidth * 0.32, 440)); }
-  function getVSpread() { return window.innerWidth >= 768 ? 44 : 26; }
+  function getRadius()  { return Math.max(160, Math.min(window.innerWidth * 0.35, 450)); }
+  function getVSpread() { return window.innerWidth >= 768 ? 36 : 22; }
   var R  = getRadius();
   var VS = getVSpread();
 
@@ -624,11 +624,11 @@ window.addEventListener('scroll', function() {
     cards.push(c);
   });
 
-  /* ── Build DNA helix decoration ── */
+  /* ── Build DNA helix decoration (14 nodes for fast 120fps GPU) ── */
   var helixNodes = [];
   (function buildHelix() {
     if (!helixEl) return;
-    var N = 22;
+    var N = 14;
     for (var i = 0; i < N; i++) {
       var t = i / (N - 1);
       var base = t * 720;
@@ -663,7 +663,7 @@ window.addEventListener('scroll', function() {
     return Math.max(0, Math.min(1, -rect.top / range));
   }
 
-  /* ── Animation tick ── */
+  /* ── Animation tick (ultra-lightweight GPU compositing) ── */
   function tick() {
     currentRot += (targetRot - currentRot) * LERP;
     var p = currentRot / FULL_ROT;
@@ -678,29 +678,27 @@ window.addEventListener('scroll', function() {
 
       var x = Math.sin(rad) * R;
       var z = Math.cos(rad) * R;
-      var y = (i - (TOTAL - 1) / 2) * VS + Math.sin(rad) * 22;
+      var y = (i - (TOTAL - 1) / 2) * VS + Math.sin(rad) * 16;
 
       var dist = PERSP - z;
-      var scale = PERSP / Math.max(100, dist);
+      var scale = PERSP / Math.max(150, dist);
       var px = x * scale;
       var py = y * scale;
 
       var depth = (Math.cos(rad) + 1) * 0.5;
-      var opacity = 0.16 + depth * 0.84;
-      var brightness = 0.32 + depth * 0.68;
-      var tilt = Math.sin(rad) * 3.5;
-      var finalScale = (scale * (0.85 + depth * 0.25)).toFixed(4);
+      var opacity = 0.2 + depth * 0.8;
+      var tilt = Math.sin(rad) * 3;
+      var finalScale = (scale * (0.8 + depth * 0.25)).toFixed(3);
 
       c.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0px) scale(' + finalScale + ') rotate(' + tilt.toFixed(1) + 'deg)';
       c.style.opacity = opacity.toFixed(2);
-      c.style.filter = 'brightness(' + brightness.toFixed(2) + ')';
       c.style.zIndex = Math.round(depth * 1000);
-      c.style.pointerEvents = depth > 0.38 ? 'auto' : 'none';
+      c.style.pointerEvents = depth > 0.4 ? 'auto' : 'none';
     }
 
     if (helixEl && helixNodes.length) {
-      var hH = helixEl.offsetHeight || (window.innerHeight * 0.68);
-      var hR = 24;
+      var hH = helixEl.offsetHeight || (window.innerHeight * 0.65);
+      var hR = 22;
       var cx = 35;
       for (var j = 0; j < helixNodes.length; j++) {
         var nd = helixNodes[j];
@@ -715,11 +713,11 @@ window.addEventListener('scroll', function() {
           nd.style.left = Math.min(rx1, rx2) + 'px';
           nd.style.top = ny + 'px';
           nd.style.width = Math.abs(rx2 - rx1) + 'px';
-          nd.style.opacity = (d2 * 0.28).toFixed(2);
+          nd.style.opacity = (d2 * 0.3).toFixed(2);
         } else {
           nd.style.left = (Math.sin(nr) * hR + cx) + 'px';
           nd.style.top = ny + 'px';
-          nd.style.opacity = (0.16 + d2 * 0.6).toFixed(2);
+          nd.style.opacity = (0.2 + d2 * 0.6).toFixed(2);
           nd.style.transform = 'translate3d(-50%,-50%,0px) scale(' + (0.4 + d2 * 0.6).toFixed(2) + ')';
         }
       }
