@@ -167,7 +167,7 @@ window.addEventListener('scroll', function() {
       const nextRect = next.getBoundingClientRect();
 
       // When the next section is rolling up and unmasking over the current section
-      if (nextRect.top < vh && nextRect.top > -vh) {
+      if (nextRect.top < vh && nextRect.top > 0) {
         const unmaskProgress = Math.max(0, Math.min(1, (vh - nextRect.top) / (vh * 0.95)));
         const scale = (1 - unmaskProgress * 0.04).toFixed(3);
         const translateY = (unmaskProgress * -20).toFixed(1);
@@ -175,9 +175,9 @@ window.addEventListener('scroll', function() {
 
         current.style.transform = 'scale(' + scale + ') translateY(' + translateY + 'px)';
         current.style.filter = 'brightness(' + brightness + ')';
-      } else if (nextRect.top >= vh) {
-        current.style.transform = 'scale(1) translateY(0px)';
-        current.style.filter = 'brightness(1)';
+      } else {
+        current.style.transform = '';
+        current.style.filter = '';
       }
     }
 
@@ -587,19 +587,17 @@ window.addEventListener('scroll', function() {
   var TOTAL = PROJECTS.length;
   var ANGLE_STEP = 360 / TOTAL;
   var FULL_ROT   = 720;
-  var PERSP      = 1800;
-  var LERP       = 0.055;
+  var PERSP      = 1300;
+  var LERP       = 0.06;
   var currentRot = 0;
   var targetRot  = 0;
   var rafId      = 0;
   var cards      = [];
 
-  function getRadius()  { return Math.max(150, Math.min(window.innerWidth * 0.22, 420)); }
-  function getVSpread() { return window.innerWidth >= 768 ? 42 : 28; }
+  function getRadius()  { return Math.max(180, Math.min(window.innerWidth * 0.32, 440)); }
+  function getVSpread() { return window.innerWidth >= 768 ? 44 : 26; }
   var R  = getRadius();
   var VS = getVSpread();
-
-  var prefersStatic = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function makeCard(d) {
     var el = document.createElement('div');
@@ -626,13 +624,11 @@ window.addEventListener('scroll', function() {
     cards.push(c);
   });
 
-  if (prefersStatic) return;
-
   /* ── Build DNA helix decoration ── */
   var helixNodes = [];
   (function buildHelix() {
     if (!helixEl) return;
-    var N = 20;
+    var N = 22;
     for (var i = 0; i < N; i++) {
       var t = i / (N - 1);
       var base = t * 720;
@@ -649,7 +645,7 @@ window.addEventListener('scroll', function() {
       helixEl.appendChild(n2);
       helixNodes.push(n2);
 
-      if (i % 4 === 0) {
+      if (i % 3 === 0) {
         var rg = document.createElement('div');
         rg.className = 'dna-rung';
         rg._ba = base; rg._t = t; rg._k = 'r';
@@ -673,7 +669,7 @@ window.addEventListener('scroll', function() {
     var p = currentRot / FULL_ROT;
 
     if (progressFill) progressFill.style.width = (p * 100).toFixed(1) + '%';
-    if (hintEl) hintEl.style.opacity = Math.max(0, 1 - p * 5).toFixed(2);
+    if (hintEl) hintEl.style.opacity = Math.max(0, 1 - p * 4.5).toFixed(2);
 
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
@@ -682,27 +678,30 @@ window.addEventListener('scroll', function() {
 
       var x = Math.sin(rad) * R;
       var z = Math.cos(rad) * R;
-      var y = (i - (TOTAL - 1) / 2) * VS + Math.sin(rad) * 18;
+      var y = (i - (TOTAL - 1) / 2) * VS + Math.sin(rad) * 22;
 
-      var pf = PERSP / (PERSP - z);
-      var px = x * pf;
-      var py = y * pf;
+      var dist = PERSP - z;
+      var scale = PERSP / Math.max(100, dist);
+      var px = x * scale;
+      var py = y * scale;
+
       var depth = (Math.cos(rad) + 1) * 0.5;
-      var opacity = 0.12 + depth * 0.88;
-      var brightness = 0.3 + depth * 0.7;
-      var tilt = Math.sin(rad) * 3;
+      var opacity = 0.16 + depth * 0.84;
+      var brightness = 0.32 + depth * 0.68;
+      var tilt = Math.sin(rad) * 3.5;
+      var finalScale = (scale * (0.85 + depth * 0.25)).toFixed(4);
 
-      c.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px, 0) scale(' + pf.toFixed(4) + ') rotate(' + tilt.toFixed(1) + 'deg)';
+      c.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0px) scale(' + finalScale + ') rotate(' + tilt.toFixed(1) + 'deg)';
       c.style.opacity = opacity.toFixed(2);
       c.style.filter = 'brightness(' + brightness.toFixed(2) + ')';
       c.style.zIndex = Math.round(depth * 1000);
-      c.style.pointerEvents = depth > 0.35 ? 'auto' : 'none';
+      c.style.pointerEvents = depth > 0.38 ? 'auto' : 'none';
     }
 
     if (helixEl && helixNodes.length) {
-      var hH = helixEl.offsetHeight || (window.innerHeight * 0.65);
-      var hR = 22;
-      var cx = 30;
+      var hH = helixEl.offsetHeight || (window.innerHeight * 0.68);
+      var hR = 24;
+      var cx = 35;
       for (var j = 0; j < helixNodes.length; j++) {
         var nd = helixNodes[j];
         var na = nd._ba + currentRot;
@@ -716,12 +715,12 @@ window.addEventListener('scroll', function() {
           nd.style.left = Math.min(rx1, rx2) + 'px';
           nd.style.top = ny + 'px';
           nd.style.width = Math.abs(rx2 - rx1) + 'px';
-          nd.style.opacity = (d2 * 0.25).toFixed(2);
+          nd.style.opacity = (d2 * 0.28).toFixed(2);
         } else {
           nd.style.left = (Math.sin(nr) * hR + cx) + 'px';
           nd.style.top = ny + 'px';
-          nd.style.opacity = (0.15 + d2 * 0.55).toFixed(2);
-          nd.style.transform = 'translate3d(-50%,-50%,0) scale(' + (0.35 + d2 * 0.65).toFixed(2) + ')';
+          nd.style.opacity = (0.16 + d2 * 0.6).toFixed(2);
+          nd.style.transform = 'translate3d(-50%,-50%,0px) scale(' + (0.4 + d2 * 0.6).toFixed(2) + ')';
         }
       }
     }
