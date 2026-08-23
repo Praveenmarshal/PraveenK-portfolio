@@ -62,9 +62,15 @@ window.addEventListener('scroll', function() {
   }
   followRing();
 
-  document.querySelectorAll('a,button,[data-magnet],.contact-btn,.live-project-btn').forEach(function(el) {
-    el.addEventListener('mouseenter', function() { ring.classList.add('hover'); });
-    el.addEventListener('mouseleave', function() { ring.classList.remove('hover'); });
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.closest('a, button, [data-magnet], .contact-btn, .live-project-btn, .dna-card, .dna-card-link')) {
+      ring.classList.add('hover');
+    }
+  });
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.closest('a, button, [data-magnet], .contact-btn, .live-project-btn, .dna-card, .dna-card-link')) {
+      ring.classList.remove('hover');
+    }
   });
 })();
 
@@ -518,49 +524,229 @@ window.addEventListener('scroll', function() {
   });
 })();
 
-/* ── STICKY CARD SCALING ────────────────────────────────── */
-(function initStickyCards() {
-  var cards = document.querySelectorAll('.project-card');
-  if (!cards.length) return;
-  var total = cards.length;
-  var isTicking = false;
+/* ── DNA SPIRAL PROJECTS ──────────────────────────────────── */
+(function initDNASpiral() {
+  var scene = document.querySelector('.dna-scene');
+  var runway = document.querySelector('.dna-scroll-runway');
+  var helixEl = document.querySelector('.dna-helix');
+  var progressFill = document.querySelector('.dna-progress-fill');
+  var hintEl = document.querySelector('.dna-subtitle');
+  if (!scene || !runway) return;
 
-  function update() {
-    var vh = window.innerHeight;
-    var baseTop = window.innerWidth >= 768 ? 100 : (window.innerWidth >= 640 ? 90 : 70);
+  /* ═════════════════════════════════════════════════════════
+     PROJECT DATA — Edit this array to update your projects.
+     Replace img, title, cat, desc, and link values below.
+     ═════════════════════════════════════════════════════════ */
+  var PROJECTS = [
+    {num:'01', cat:'Fintech Analytics',     title:'European Bank \u2014 Customer Retention Analytics',
+     img:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
+     desc:'10,000 customers \u00b7 20.4% churn rate \u00b7 RSI scoring',
+     link:'https://european-bank-retention-vpuzhkqcx2mbo2tmupkjhu.streamlit.app/'},
 
-    cards.forEach(function(card, i) {
-      var container = card.closest('.project-card-container');
-      if (!container) return;
+    {num:'02', cat:'Financial Analytics',   title:'Nassau Candy Profitability Dashboard',
+     img:'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
+     desc:'Pareto 80/20 SKU \u00b7 factory cost breakdowns \u00b7 live margin sims',
+     link:'https://lrvbdrs3em8zb6pusaxslw.streamlit.app/'},
 
-      var rect = container.getBoundingClientRect();
-      var stickyOffset = baseTop + i * 8;
-      card.style.top = stickyOffset + 'px';
+    {num:'03', cat:'Data Analysis',         title:'Smartphone Market Analysis',
+     img:'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&w=600&q=80',
+     desc:'15+ brands \u00b7 8-year span \u00b7 mid-range CAGR outpacing premium +12%',
+     link:'https://github.com/praveenmarshal'},
 
-      // When the card container has reached stickyOffset, calculate progress towards next
-      var scrollPast = stickyOffset - rect.top;
-      var scrollRange = Math.max(1, rect.height - vh * 0.4);
-      var progress = Math.max(0, Math.min(1, scrollPast / scrollRange));
+    {num:'04', cat:'Business Intelligence', title:'Nykaa Campaign Intelligence Hub',
+     img:'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=600&q=80',
+     desc:'55k+ records across 6 channels \u00b7 61% influencer revenue',
+     link:'https://github.com/praveenmarshal'},
 
-      var targetScale = 1 - (total - 1 - i) * 0.02;
-      var currentScale = 1 - (1 - targetScale) * progress;
-      var clampedScale = Math.max(targetScale, Math.min(1, currentScale));
+    {num:'05', cat:'Retail Analytics',      title:'Retail Sales Analysis Dashboard',
+     img:'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=600&q=80',
+     desc:'10+ outlets \u00b7 SQL window functions \u00b7 YoY growth rankings',
+     link:'https://github.com/praveenmarshal'},
 
-      card.style.transform = 'scale(' + clampedScale + ')';
-    });
-    isTicking = false;
+    {num:'06', cat:'Operational BI',        title:'Pizza Sales Analytics Dashboard',
+     img:'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80',
+     desc:'Peak dining hours \u00b7 category revenue \u00b7 real-time inventory KPIs',
+     link:'https://app.powerbi.com/groups/me/reports/05831871-e9f9-43a9-85c8-3cf4fd9f5304/ReportSection9812978a18f08c4da3e2?experience=power-bi'},
+
+    {num:'07', cat:'Sports Analytics',      title:'Cricket Player Analysis Dashboard',
+     img:'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?auto=format&fit=crop&w=600&q=80',
+     desc:'Batting averages \u00b7 bowling economies \u00b7 ODI / T20 / Test',
+     link:'https://github.com/praveenmarshal'},
+
+    {num:'08', cat:'Machine Learning',      title:'Tamil Movie Recommendation System',
+     img:'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=600&q=80',
+     desc:'TMDb API \u00b7 cosine similarity \u00b7 IMDb-weighted scoring',
+     link:'https://github.com/praveenmarshal'},
+
+    {num:'09', cat:'Machine Learning',      title:'Customer Churn Analysis &amp; Prediction',
+     img:'https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=600&q=80',
+     desc:'68% churn probability segment \u00b7 4 dashboards \u00b7 retention workflows',
+     link:'https://github.com/praveenmarshal'}
+  ];
+
+  var TOTAL = PROJECTS.length;
+  var ANGLE_STEP = 360 / TOTAL;
+  var FULL_ROT   = 720;
+  var PERSP      = 1800;
+  var LERP       = 0.055;
+  var currentRot = 0;
+  var targetRot  = 0;
+  var rafId      = 0;
+  var cards      = [];
+
+  function getRadius()  { return Math.max(150, Math.min(window.innerWidth * 0.22, 420)); }
+  function getVSpread() { return window.innerWidth >= 768 ? 42 : 28; }
+  var R  = getRadius();
+  var VS = getVSpread();
+
+  var prefersStatic = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function makeCard(d) {
+    var el = document.createElement('div');
+    el.className = 'dna-card';
+    el.innerHTML =
+      '<div class="dna-card-inner">' +
+        '<div class="dna-card-img">' +
+          '<img src="' + d.img + '" alt="' + d.title + '" loading="lazy">' +
+          '<span class="dna-card-num">' + d.num + '</span>' +
+          '<span class="dna-card-cat">' + d.cat + '</span>' +
+        '</div>' +
+        '<div class="dna-card-body">' +
+          '<h3 class="dna-card-title">' + d.title + '</h3>' +
+          '<p class="dna-card-desc">' + d.desc + '</p>' +
+          '<a href="' + d.link + '" target="_blank" rel="noopener" class="dna-card-link">View Project \u2192</a>' +
+        '</div>' +
+      '</div>';
+    return el;
   }
 
-  function onScroll() {
-    if (!isTicking) {
-      isTicking = true;
-      requestAnimationFrame(update);
+  PROJECTS.forEach(function(p) {
+    var c = makeCard(p);
+    scene.appendChild(c);
+    cards.push(c);
+  });
+
+  if (prefersStatic) return;
+
+  /* ── Build DNA helix decoration ── */
+  var helixNodes = [];
+  (function buildHelix() {
+    if (!helixEl) return;
+    var N = 20;
+    for (var i = 0; i < N; i++) {
+      var t = i / (N - 1);
+      var base = t * 720;
+
+      var n1 = document.createElement('div');
+      n1.className = 'dna-node dna-node-cyan';
+      n1._ba = base; n1._t = t; n1._k = 'n';
+      helixEl.appendChild(n1);
+      helixNodes.push(n1);
+
+      var n2 = document.createElement('div');
+      n2.className = 'dna-node dna-node-magenta';
+      n2._ba = base + 180; n2._t = t; n2._k = 'n';
+      helixEl.appendChild(n2);
+      helixNodes.push(n2);
+
+      if (i % 4 === 0) {
+        var rg = document.createElement('div');
+        rg.className = 'dna-rung';
+        rg._ba = base; rg._t = t; rg._k = 'r';
+        helixEl.appendChild(rg);
+        helixNodes.push(rg);
+      }
+    }
+  })();
+
+  /* ── Scroll progress 0..1 ── */
+  function scrollProgress() {
+    var rect = runway.getBoundingClientRect();
+    var range = rect.height - window.innerHeight;
+    if (range <= 0) return 0;
+    return Math.max(0, Math.min(1, -rect.top / range));
+  }
+
+  /* ── Animation tick ── */
+  function tick() {
+    currentRot += (targetRot - currentRot) * LERP;
+    var p = currentRot / FULL_ROT;
+
+    if (progressFill) progressFill.style.width = (p * 100).toFixed(1) + '%';
+    if (hintEl) hintEl.style.opacity = Math.max(0, 1 - p * 5).toFixed(2);
+
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      var angle = i * ANGLE_STEP + currentRot;
+      var rad = angle * Math.PI / 180;
+
+      var x = Math.sin(rad) * R;
+      var z = Math.cos(rad) * R;
+      var y = (i - (TOTAL - 1) / 2) * VS + Math.sin(rad) * 18;
+
+      var pf = PERSP / (PERSP - z);
+      var px = x * pf;
+      var py = y * pf;
+      var depth = (Math.cos(rad) + 1) * 0.5;
+      var opacity = 0.12 + depth * 0.88;
+      var brightness = 0.3 + depth * 0.7;
+      var tilt = Math.sin(rad) * 3;
+
+      c.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px, 0) scale(' + pf.toFixed(4) + ') rotate(' + tilt.toFixed(1) + 'deg)';
+      c.style.opacity = opacity.toFixed(2);
+      c.style.filter = 'brightness(' + brightness.toFixed(2) + ')';
+      c.style.zIndex = Math.round(depth * 1000);
+      c.style.pointerEvents = depth > 0.35 ? 'auto' : 'none';
+    }
+
+    if (helixEl && helixNodes.length) {
+      var hH = helixEl.offsetHeight || (window.innerHeight * 0.65);
+      var hR = 22;
+      var cx = 30;
+      for (var j = 0; j < helixNodes.length; j++) {
+        var nd = helixNodes[j];
+        var na = nd._ba + currentRot;
+        var nr = na * Math.PI / 180;
+        var d2 = (Math.cos(nr) + 1) * 0.5;
+        var ny = nd._t * hH;
+
+        if (nd._k === 'r') {
+          var rx1 = Math.sin(nr) * hR + cx;
+          var rx2 = Math.sin(nr + Math.PI) * hR + cx;
+          nd.style.left = Math.min(rx1, rx2) + 'px';
+          nd.style.top = ny + 'px';
+          nd.style.width = Math.abs(rx2 - rx1) + 'px';
+          nd.style.opacity = (d2 * 0.25).toFixed(2);
+        } else {
+          nd.style.left = (Math.sin(nr) * hR + cx) + 'px';
+          nd.style.top = ny + 'px';
+          nd.style.opacity = (0.15 + d2 * 0.55).toFixed(2);
+          nd.style.transform = 'translate3d(-50%,-50%,0) scale(' + (0.35 + d2 * 0.65).toFixed(2) + ')';
+        }
+      }
+    }
+
+    if (Math.abs(targetRot - currentRot) > 0.005) {
+      rafId = requestAnimationFrame(tick);
+    } else {
+      currentRot = targetRot;
+      rafId = 0;
     }
   }
 
+  function onScroll() {
+    targetRot = scrollProgress() * FULL_ROT;
+    if (!rafId) rafId = requestAnimationFrame(tick);
+  }
+
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  update();
+  window.addEventListener('resize', function() {
+    R  = getRadius();
+    VS = getVSpread();
+    onScroll();
+  }, { passive: true });
+
+  onScroll();
 })();
 
 /* ── SMOOTH ANCHOR SCROLL ───────────────────────────────── */
