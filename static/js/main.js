@@ -178,18 +178,18 @@ window.addEventListener('scroll', function() {
 
     var isMob = window.innerWidth < 768;
     var stageRect = stage.getBoundingClientRect();
-    var stageW = stageRect.width || 500;
-    var stageH = stageRect.height || 500;
+    var stageW = stageRect.width || 600;
+    var stageH = stageRect.height || 600;
 
-    var rx = isMob ? Math.min(145, window.innerWidth * 0.40) : Math.min(310, Math.max(250, stageW * 0.48));
-    var ry = isMob ? Math.min(150, stageH * 0.39) : Math.min(230, Math.max(170, stageH * 0.41));
+    var rx = isMob ? Math.min(170, window.innerWidth * 0.44) : Math.min(380, Math.max(290, stageW * 0.52));
+    var ry = isMob ? Math.min(185, stageH * 0.42) : Math.min(280, Math.max(210, stageH * 0.44));
 
     // Parallax character shift
     if (charImg) {
-      var charShiftX = mouseX * 10;
-      var charShiftY = mouseY * 8;
-      var charBreathe = Math.sin(time * 0.8) * 3;
-      charImg.style.transform = 'translate3d(' + charShiftX.toFixed(1) + 'px,' + (charShiftY + charBreathe).toFixed(1) + 'px,0px)';
+      var charShiftX = mouseX * 12;
+      var charShiftY = mouseY * 10;
+      var charBreathe = Math.sin(time * 0.8) * 3.5;
+      charImg.style.transform = 'scale(' + (isMob ? 1.12 : 1.15) + ') translate3d(' + charShiftX.toFixed(1) + 'px,' + (charShiftY + charBreathe).toFixed(1) + 'px,0px)';
     }
 
     // Update 6 Skill Orbit Cards
@@ -199,12 +199,12 @@ window.addEventListener('scroll', function() {
 
       var orbitAngle = time * s.speed + s.phase;
       // Elliptical harmonic wobble + anchor position
-      var wobbleX = Math.cos(orbitAngle) * (isMob ? 8 : 14);
-      var wobbleY = Math.sin(orbitAngle) * (isMob ? 10 : 16);
+      var wobbleX = Math.cos(orbitAngle) * (isMob ? 10 : 16);
+      var wobbleY = Math.sin(orbitAngle) * (isMob ? 12 : 18);
       var wobbleZ = Math.sin(orbitAngle * 0.8);
 
-      var px = s.targetX * rx + wobbleX + mouseX * (s.side === 'left' ? 14 : -14);
-      var py = s.targetY * ry + wobbleY + mouseY * 12;
+      var px = s.targetX * rx + wobbleX + mouseX * (s.side === 'left' ? 16 : -16);
+      var py = s.targetY * ry + wobbleY + mouseY * 14;
       var scale = (0.96 + (wobbleZ + 1) * 0.04).toFixed(3);
       var opacity = (0.88 + (wobbleZ + 1) * 0.06).toFixed(2);
       var tilt = (Math.sin(orbitAngle) * 3).toFixed(1);
@@ -221,13 +221,13 @@ window.addEventListener('scroll', function() {
       // Character center anchor in canvas coordinates
       var charRect = stage.getBoundingClientRect();
       var heroRect = hero.getBoundingClientRect();
-      var centerX = charRect.left - heroRect.left + charRect.width / 2 + mouseX * 8;
-      var centerY = charRect.top - heroRect.top + charRect.height * 0.52 + mouseY * 6;
+      var centerX = charRect.left - heroRect.left + charRect.width / 2 + mouseX * 10;
+      var centerY = charRect.top - heroRect.top + charRect.height * 0.50 + mouseY * 8;
 
       // Draw 3 Elliptical Orbit Rings
       var ringRadii = isMob
-        ? [{ rx: rx * 1.05, ry: ry * 0.45, rot: -0.15 }, { rx: rx * 1.25, ry: ry * 0.72, rot: 0.12 }]
-        : [{ rx: rx * 1.08, ry: ry * 0.52, rot: -0.20 }, { rx: rx * 1.28, ry: ry * 0.78, rot: 0.16 }, { rx: rx * 0.85, ry: ry * 0.95, rot: 0.35 }];
+        ? [{ rx: rx * 1.05, ry: ry * 0.48, rot: -0.15 }, { rx: rx * 1.25, ry: ry * 0.74, rot: 0.12 }]
+        : [{ rx: rx * 1.08, ry: ry * 0.54, rot: -0.20 }, { rx: rx * 1.28, ry: ry * 0.80, rot: 0.16 }, { rx: rx * 0.88, ry: ry * 0.98, rot: 0.35 }];
 
       ringRadii.forEach(function(ring, idx) {
         ctx.save();
