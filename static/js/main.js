@@ -63,12 +63,12 @@ window.addEventListener('scroll', function() {
   followRing();
 
   document.addEventListener('mouseover', function(e) {
-    if (e.target.closest('a, button, [data-magnet], .contact-btn, .live-project-btn, .dna-card, .dna-card-link')) {
+    if (e.target.closest('a, button, [data-magnet], .contact-btn, .live-project-btn, .mono-card, .mono-card-link, .dna-card, .dna-card-link')) {
       ring.classList.add('hover');
     }
   });
   document.addEventListener('mouseout', function(e) {
-    if (e.target.closest('a, button, [data-magnet], .contact-btn, .live-project-btn, .dna-card, .dna-card-link')) {
+    if (e.target.closest('a, button, [data-magnet], .contact-btn, .live-project-btn, .mono-card, .mono-card-link, .dna-card, .dna-card-link')) {
       ring.classList.remove('hover');
     }
   });
@@ -412,95 +412,126 @@ window.addEventListener('scroll', function() {
   });
 })();
 
-/* ── DNA SPIRAL PROJECTS ──────────────────────────────────── */
-(function initDNASpiral() {
-  var scene = document.querySelector('.dna-scene');
-  var runway = document.querySelector('.dna-scroll-runway');
-  var helixEl = document.querySelector('.dna-helix');
-  var progressFill = document.querySelector('.dna-progress-fill');
-  var hintEl = document.querySelector('.dna-subtitle');
+/* ── MONOCHROME 3D SPIRAL PROJECTS SHOWCASE (Exact Reference Match) ── */
+(function initMonoSpiral() {
+  var scene = document.querySelector('.mono-spiral-scene');
+  var runway = document.querySelector('.mono-scroll-runway');
+  var viewport = document.querySelector('.mono-viewport');
+  var stage3d = document.querySelector('.mono-3d-stage');
+  var ribbonCanvas = document.querySelector('.mono-ribbon-canvas');
+  var starsCanvas = document.querySelector('.mono-stars-canvas');
+  var vertThumb = document.querySelector('.mono-vert-thumb');
   if (!scene || !runway) return;
 
   /* ═════════════════════════════════════════════════════════
-     PROJECT DATA — Edit this array to update your projects.
-     Replace img, title, cat, desc, and link values below.
+     8 FEATURED PROJECTS DATA (Monochrome Reference)
      ═════════════════════════════════════════════════════════ */
   var PROJECTS = [
-    {num:'01', cat:'Fintech Analytics',     title:'European Bank \u2014 Customer Retention Analytics',
-     img:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
-     desc:'10,000 customers \u00b7 20.4% churn rate \u00b7 RSI scoring',
-     link:'https://european-bank-retention-vpuzhkqcx2mbo2tmupkjhu.streamlit.app/'},
-
-    {num:'02', cat:'Financial Analytics',   title:'Nassau Candy Profitability Dashboard',
-     img:'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
-     desc:'Pareto 80/20 SKU \u00b7 factory cost breakdowns \u00b7 live margin sims',
-     link:'https://lrvbdrs3em8zb6pusaxslw.streamlit.app/'},
-
-    {num:'03', cat:'Data Analysis',         title:'Smartphone Market Analysis',
-     img:'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&w=600&q=80',
-     desc:'15+ brands \u00b7 8-year span \u00b7 mid-range CAGR outpacing premium +12%',
-     link:'https://github.com/praveenmarshal'},
-
-    {num:'04', cat:'Business Intelligence', title:'Nykaa Campaign Intelligence Hub',
-     img:'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=600&q=80',
-     desc:'55k+ records across 6 channels \u00b7 61% influencer revenue',
-     link:'https://github.com/praveenmarshal'},
-
-    {num:'05', cat:'Retail Analytics',      title:'Retail Sales Analysis Dashboard',
-     img:'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=600&q=80',
-     desc:'10+ outlets \u00b7 SQL window functions \u00b7 YoY growth rankings',
-     link:'https://github.com/praveenmarshal'},
-
-    {num:'06', cat:'Operational BI',        title:'Pizza Sales Analytics Dashboard',
-     img:'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80',
-     desc:'Peak dining hours \u00b7 category revenue \u00b7 real-time inventory KPIs',
-     link:'https://app.powerbi.com/groups/me/reports/05831871-e9f9-43a9-85c8-3cf4fd9f5304/ReportSection9812978a18f08c4da3e2?experience=power-bi'},
-
-    {num:'07', cat:'Sports Analytics',      title:'Cricket Player Analysis Dashboard',
-     img:'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?auto=format&fit=crop&w=600&q=80',
-     desc:'Batting averages \u00b7 bowling economies \u00b7 ODI / T20 / Test',
-     link:'https://github.com/praveenmarshal'},
-
-    {num:'08', cat:'Machine Learning',      title:'Tamil Movie Recommendation System',
-     img:'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=600&q=80',
-     desc:'TMDb API \u00b7 cosine similarity \u00b7 IMDb-weighted scoring',
-     link:'https://github.com/praveenmarshal'},
-
-    {num:'09', cat:'Machine Learning',      title:'Customer Churn Analysis &amp; Prediction',
-     img:'https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=600&q=80',
-     desc:'68% churn probability segment \u00b7 4 dashboards \u00b7 retention workflows',
-     link:'https://github.com/praveenmarshal'}
+    {
+      num: '01',
+      cat: 'FINTECH ANALYTICS',
+      title: 'European Bank \u2014 Customer Retention Analytics',
+      desc: '10,000 customers \u00b7 20.4% churn rate \u00b7 RSI scoring',
+      img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80',
+      link: 'https://european-bank-retention-vpuzhkqcx2mbo2tmupkjhu.streamlit.app/'
+    },
+    {
+      num: '02',
+      cat: 'FINANCIAL ANALYTICS',
+      title: 'Nassau Candy Profitability Dashboard',
+      desc: 'Pareto 80/20 SKU \u00b7 factory cost breakdowns \u00b7 live margin sims',
+      img: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
+      link: 'https://lrvbdrs3em8zb6pusaxslw.streamlit.app/'
+    },
+    {
+      num: '03',
+      cat: 'DATA ANALYSIS',
+      title: 'Smartphone Market Analysis',
+      desc: '5.5B+ brands \u00b7 8-year span \u00b7 mid-range CAGR outpacing premium \u00b7 12%',
+      img: 'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&w=600&q=80',
+      link: 'https://github.com/praveenmarshal'
+    },
+    {
+      num: '04',
+      cat: 'SALES ANALYTICS',
+      title: 'Para Sales Analysis',
+      desc: 'D2C performance \u00b7 region wise trends \u00b7 growth opportunities',
+      img: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=600&q=80',
+      link: 'https://github.com/praveenmarshal'
+    },
+    {
+      num: '05',
+      cat: 'E-COMMERCE INSIGHTS',
+      title: 'Customer Churn Analysis Prediction',
+      desc: '68% churn probability segment \u00b7 4 dashboards \u00b7 retention workflows',
+      img: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=600&q=80',
+      link: 'https://github.com/praveenmarshal'
+    },
+    {
+      num: '06',
+      cat: 'MACHINE LEARNING',
+      title: 'Demand Forecasting Model',
+      desc: 'Time-series \u00b7 inventory forecasting \u00b7 predictive optimization',
+      img: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=600&q=80',
+      link: 'https://github.com/praveenmarshal'
+    },
+    {
+      num: '07',
+      cat: 'BUSINESS INTELLIGENCE',
+      title: 'Executive KPI Dashboard',
+      desc: 'Real-time KPIs \u00b7 drill-down insights \u00b7 strategic decisions',
+      img: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?auto=format&fit=crop&w=600&q=80',
+      link: 'https://github.com/praveenmarshal'
+    },
+    {
+      num: '08',
+      cat: 'MARKET RESEARCH',
+      title: 'Competitor Benchmark Analysis',
+      desc: 'SWOT \u00b7 positioning map \u00b7 data-driven strategy',
+      img: 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=600&q=80',
+      link: 'https://github.com/praveenmarshal'
+    }
   ];
 
   var TOTAL = PROJECTS.length;
-  var ANGLE_STEP = 360 / TOTAL;
-  var FULL_ROT   = 720;
-  var PERSP      = 1200;
-  var LERP       = 0.085;
+  var ANGLE_STEP = 360 / TOTAL; // 45 deg between cards
+  var FULL_ROT   = 720;         // 2 full turns
+  var PERSP      = 1300;        // perspective depth
+  var LERP       = 0.085;       // responsiveness
   var currentRot = 0;
   var targetRot  = 0;
   var rafId      = 0;
   var cards      = [];
 
-  function getRadius()  { return Math.max(160, Math.min(window.innerWidth * 0.35, 450)); }
-  function getVSpread() { return window.innerWidth >= 768 ? 36 : 22; }
+  function getRadius()  {
+    if (window.innerWidth <= 767) return Math.min(window.innerWidth * 0.38, 200);
+    if (window.innerWidth <= 1024) return Math.min(window.innerWidth * 0.3, 340);
+    return Math.min(window.innerWidth * 0.28, 440);
+  }
+  function getVSpread() {
+    if (window.innerWidth <= 767) return 26;
+    return 42;
+  }
   var R  = getRadius();
   var VS = getVSpread();
 
+  /* ── Build Card Elements ── */
   function makeCard(d) {
     var el = document.createElement('div');
-    el.className = 'dna-card';
+    el.className = 'mono-card';
     el.innerHTML =
-      '<div class="dna-card-inner">' +
-        '<div class="dna-card-img">' +
+      '<div class="mono-card-num-float">' + d.num + '</div>' +
+      '<div class="mono-card-inner">' +
+        '<div class="mono-card-thumb">' +
           '<img src="' + d.img + '" alt="' + d.title + '" loading="lazy">' +
-          '<span class="dna-card-num">' + d.num + '</span>' +
-          '<span class="dna-card-cat">' + d.cat + '</span>' +
         '</div>' +
-        '<div class="dna-card-body">' +
-          '<h3 class="dna-card-title">' + d.title + '</h3>' +
-          '<p class="dna-card-desc">' + d.desc + '</p>' +
-          '<a href="' + d.link + '" target="_blank" rel="noopener" class="dna-card-link">View Project \u2192</a>' +
+        '<div class="mono-card-content">' +
+          '<div>' +
+            '<div class="mono-card-cat">' + d.cat + '</div>' +
+            '<h3 class="mono-card-title">' + d.title + '</h3>' +
+            '<p class="mono-card-desc">' + d.desc + '</p>' +
+          '</div>' +
+          '<a href="' + d.link + '" target="_blank" rel="noopener" class="mono-card-link">VIEW PROJECT \u2192</a>' +
         '</div>' +
       '</div>';
     return el;
@@ -512,36 +543,119 @@ window.addEventListener('scroll', function() {
     cards.push(c);
   });
 
-  /* ── Build DNA helix decoration (14 nodes for fast 120fps GPU) ── */
-  var helixNodes = [];
-  (function buildHelix() {
-    if (!helixEl) return;
-    var N = 14;
-    for (var i = 0; i < N; i++) {
-      var t = i / (N - 1);
-      var base = t * 720;
+  /* ── Background Star / Particle Field ── */
+  (function initStarfield() {
+    if (!starsCanvas) return;
+    var ctx = starsCanvas.getContext('2d');
+    var stars = [];
+    var count = 55;
 
-      var n1 = document.createElement('div');
-      n1.className = 'dna-node dna-node-cyan';
-      n1._ba = base; n1._t = t; n1._k = 'n';
-      helixEl.appendChild(n1);
-      helixNodes.push(n1);
-
-      var n2 = document.createElement('div');
-      n2.className = 'dna-node dna-node-magenta';
-      n2._ba = base + 180; n2._t = t; n2._k = 'n';
-      helixEl.appendChild(n2);
-      helixNodes.push(n2);
-
-      if (i % 3 === 0) {
-        var rg = document.createElement('div');
-        rg.className = 'dna-rung';
-        rg._ba = base; rg._t = t; rg._k = 'r';
-        helixEl.appendChild(rg);
-        helixNodes.push(rg);
+    function resizeStars() {
+      starsCanvas.width = starsCanvas.offsetWidth;
+      starsCanvas.height = starsCanvas.offsetHeight;
+      stars = [];
+      for (var i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * starsCanvas.width,
+          y: Math.random() * starsCanvas.height,
+          r: Math.random() * 1.2 + 0.4,
+          a: Math.random() * 0.45 + 0.1,
+          speed: Math.random() * 0.02 + 0.005,
+          phase: Math.random() * Math.PI * 2
+        });
       }
     }
+
+    function drawStars() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+      var time = Date.now() * 0.001;
+      for (var i = 0; i < stars.length; i++) {
+        var s = stars[i];
+        var alpha = s.a + Math.sin(time + s.phase) * 0.18;
+        if (alpha < 0.05) alpha = 0.05;
+        ctx.fillStyle = 'rgba(255,255,255,' + alpha.toFixed(2) + ')';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    resizeStars();
+    drawStars();
+    window.addEventListener('resize', resizeStars, { passive: true });
   })();
+
+  /* ── 3D Glowing Spiral Ribbon Canvas ── */
+  var ribbonCtx = ribbonCanvas ? ribbonCanvas.getContext('2d') : null;
+  function renderRibbon(rotDeg) {
+    if (!ribbonCtx || !ribbonCanvas) return;
+    var w = ribbonCanvas.width = ribbonCanvas.offsetWidth;
+    var h = ribbonCanvas.height = ribbonCanvas.offsetHeight;
+    if (w <= 0 || h <= 0) return;
+
+    ribbonCtx.clearRect(0, 0, w, h);
+
+    // Axis center point
+    var cx = window.innerWidth <= 767 ? w * 0.5 : (window.innerWidth <= 1024 ? w * 0.68 : w * 0.63);
+    var cy = window.innerHeight * 0.5;
+    var ribbonR = R * 0.85;
+    var totalTurns = 2.8;
+    var steps = 140;
+
+    var rotRad = rotDeg * Math.PI / 180;
+    var points = [];
+
+    for (var k = 0; k <= steps; k++) {
+      var t = k / steps;
+      var theta = (t * totalTurns * Math.PI * 2) - rotRad;
+      var x3 = Math.sin(theta) * ribbonR;
+      var z3 = Math.cos(theta) * ribbonR;
+      // Vertical span from top to bottom
+      var y3 = (t - 0.5) * (h * 0.68);
+
+      var dist = PERSP - z3;
+      var sc = PERSP / Math.max(100, dist);
+      var px = cx + x3 * sc;
+      var py = cy + y3 * sc;
+      var depth = (Math.cos(theta) + 1) * 0.5; // 1 = front, 0 = back
+
+      points.push({ x: px, y: py, depth: depth, z: z3 });
+    }
+
+    // Draw back segments (behind axis)
+    ribbonCtx.beginPath();
+    for (var i = 0; i < points.length - 1; i++) {
+      var p1 = points[i];
+      var p2 = points[i + 1];
+      if (p1.z <= 0 || p2.z <= 0) {
+        ribbonCtx.moveTo(p1.x, p1.y);
+        ribbonCtx.lineTo(p2.x, p2.y);
+      }
+    }
+    ribbonCtx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ribbonCtx.lineWidth = 1.5;
+    ribbonCtx.stroke();
+
+    // Draw front segments (in front of axis with glowing white bloom)
+    for (var j = 0; j < points.length - 1; j++) {
+      var pt1 = points[j];
+      var pt2 = points[j + 1];
+      if (pt1.z > 0 && pt2.z > 0) {
+        var dAvg = (pt1.depth + pt2.depth) * 0.5;
+        ribbonCtx.beginPath();
+        ribbonCtx.moveTo(pt1.x, pt1.y);
+        ribbonCtx.lineTo(pt2.x, pt2.y);
+        ribbonCtx.strokeStyle = 'rgba(255,255,255,' + (0.35 + dAvg * 0.6).toFixed(2) + ')';
+        ribbonCtx.lineWidth = 2 + dAvg * 1.5;
+        ribbonCtx.shadowColor = 'rgba(255,255,255,0.8)';
+        ribbonCtx.shadowBlur = 12 * dAvg;
+        ribbonCtx.stroke();
+        ribbonCtx.shadowBlur = 0;
+      }
+    }
+  }
 
   /* ── Scroll progress 0..1 ── */
   function scrollProgress() {
@@ -551,14 +665,20 @@ window.addEventListener('scroll', function() {
     return Math.max(0, Math.min(1, -rect.top / range));
   }
 
-  /* ── Animation tick (ultra-lightweight GPU compositing) ── */
+  /* ── Main Animation Tick ── */
   function tick() {
     currentRot += (targetRot - currentRot) * LERP;
     var p = currentRot / FULL_ROT;
 
-    if (progressFill) progressFill.style.width = (p * 100).toFixed(1) + '%';
-    if (hintEl) hintEl.style.opacity = Math.max(0, 1 - p * 4.5).toFixed(2);
+    // Update vertical progress thumb
+    if (vertThumb) {
+      vertThumb.style.top = (p * 86).toFixed(1) + 'px';
+    }
 
+    // Render 3D glowing spiral ribbon
+    renderRibbon(currentRot);
+
+    // Update 3D cards
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
       var angle = i * ANGLE_STEP - currentRot;
@@ -566,48 +686,27 @@ window.addEventListener('scroll', function() {
 
       var x = Math.sin(rad) * R;
       var z = Math.cos(rad) * R;
-      var y = (i - (TOTAL - 1) / 2) * VS * 0.45 + Math.sin(rad) * 14;
+      var y = (i - (TOTAL - 1) / 2) * VS * 0.5 + Math.sin(rad) * 20;
 
       var dist = PERSP - z;
-      var scale = PERSP / Math.max(150, dist);
+      var scale = PERSP / Math.max(120, dist);
       var px = x * scale;
       var py = y * scale;
 
-      var depth = (Math.cos(rad) + 1) * 0.5;
-      var opacity = 0.2 + depth * 0.8;
+      var depth = (Math.cos(rad) + 1) * 0.5; // 0 = back, 1 = front
+      var opacity = 0.18 + depth * 0.82;
       var tilt = Math.sin(rad) * 3;
-      var finalScale = (scale * (0.8 + depth * 0.25)).toFixed(3);
+      var cardScale = (scale * (0.75 + depth * 0.3)).toFixed(3);
 
-      c.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0px) scale(' + finalScale + ') rotate(' + tilt.toFixed(1) + 'deg)';
+      c.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0px) scale(' + cardScale + ') rotate(' + tilt.toFixed(1) + 'deg)';
       c.style.opacity = opacity.toFixed(2);
       c.style.zIndex = Math.round(depth * 1000);
       c.style.pointerEvents = depth > 0.4 ? 'auto' : 'none';
-    }
 
-    if (helixEl && helixNodes.length) {
-      var hH = helixEl.offsetHeight || (window.innerHeight * 0.65);
-      var hR = 22;
-      var cx = 35;
-      for (var j = 0; j < helixNodes.length; j++) {
-        var nd = helixNodes[j];
-        var na = nd._ba - currentRot;
-        var nr = na * Math.PI / 180;
-        var d2 = (Math.cos(nr) + 1) * 0.5;
-        var ny = nd._t * hH;
-
-        if (nd._k === 'r') {
-          var rx1 = Math.sin(nr) * hR + cx;
-          var rx2 = Math.sin(nr + Math.PI) * hR + cx;
-          nd.style.left = Math.min(rx1, rx2) + 'px';
-          nd.style.top = ny + 'px';
-          nd.style.width = Math.abs(rx2 - rx1) + 'px';
-          nd.style.opacity = (d2 * 0.3).toFixed(2);
-        } else {
-          nd.style.left = (Math.sin(nr) * hR + cx) + 'px';
-          nd.style.top = ny + 'px';
-          nd.style.opacity = (0.2 + d2 * 0.6).toFixed(2);
-          nd.style.transform = 'translate3d(-50%,-50%,0px) scale(' + (0.4 + d2 * 0.6).toFixed(2) + ')';
-        }
+      if (depth > 0.88) {
+        c.classList.add('active');
+      } else {
+        c.classList.remove('active');
       }
     }
 

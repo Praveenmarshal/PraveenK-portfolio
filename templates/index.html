@@ -410,25 +410,76 @@
 
 <!-- ═══════════════ PROJECTS STAGE (Unmask Container) ═══════════════ -->
 <div class="unmask-stage" id="projectsStage">
-  <section id="projects" class="projects-section dna-projects-section">
-    <div class="dna-scroll-runway">
-      <div class="dna-viewport">
-        <!-- Ambient glows -->
-        <div class="dna-glow dna-glow-1"></div>
-        <div class="dna-glow dna-glow-2"></div>
+  <section id="projects" class="projects-section mono-projects-section">
+    <div class="mono-scroll-runway">
+      <div class="mono-viewport">
+        <!-- Subtle Star / Particle Canvas -->
+        <canvas class="mono-stars-canvas" aria-hidden="true"></canvas>
 
-        <!-- Title -->
-        <h2 class="hero-heading projects-heading dna-heading">Projects</h2>
-        <p class="dna-subtitle">&darr; Scroll to explore</p>
+        <!-- Ambient Center Glow -->
+        <div class="mono-ambient-glow" aria-hidden="true"></div>
 
-        <!-- DNA Helix (JS-populated) -->
-        <div class="dna-helix" aria-hidden="true"></div>
+        <!-- LEFT SIDEBAR -->
+        <div class="mono-sidebar">
+          <div class="mono-tag-wrap">
+            <span class="mono-tag-line"></span>
+            <span class="mono-tag-dot"></span>
+            <span class="mono-tag-text">FEATURED WORK</span>
+          </div>
 
-        <!-- 3D Card Scene (JS-populated from data array in main.js) -->
-        <div class="dna-scene"></div>
+          <h2 class="mono-heading">Projects</h2>
 
-        <!-- Scroll progress -->
-        <div class="dna-progress"><div class="dna-progress-fill"></div></div>
+          <p class="mono-desc">
+            Real solutions. Measurable impact.<br>
+            Explore a selected range of projects<br>
+            designed to solve complex problems<br>
+            and deliver results.
+          </p>
+
+          <!-- Vertical scroll progress indicator -->
+          <div class="mono-vert-progress" aria-hidden="true">
+            <div class="mono-vert-line"></div>
+            <div class="mono-vert-thumb"></div>
+          </div>
+
+          <!-- Mouse Scroll Indicator -->
+          <div class="mono-scroll-indicator">
+            <div class="mono-mouse-icon">
+              <span class="mono-mouse-wheel"></span>
+            </div>
+            <span class="mono-scroll-text">SCROLL TO EXPLORE</span>
+          </div>
+        </div>
+
+        <!-- RIGHT/CENTER 3D STAGE -->
+        <div class="mono-3d-stage">
+          <!-- Central Glowing Vertical Axis -->
+          <div class="mono-axis" aria-hidden="true">
+            <div class="mono-axis-flare-top"></div>
+            <div class="mono-axis-beam"></div>
+            <div class="mono-axis-base"></div>
+          </div>
+
+          <!-- Floor Perspective Concentric Ripples -->
+          <div class="mono-floor-ripples" aria-hidden="true">
+            <div class="mono-floor-ring mono-ring-1"></div>
+            <div class="mono-floor-ring mono-ring-2"></div>
+            <div class="mono-floor-ring mono-ring-3"></div>
+            <div class="mono-floor-ring mono-ring-4"></div>
+          </div>
+
+          <!-- 3D Glowing Spiral Ribbon Canvas -->
+          <canvas class="mono-ribbon-canvas" aria-hidden="true"></canvas>
+
+          <!-- 3D Card Scene (Populated by JS from projects data array) -->
+          <div class="mono-spiral-scene"></div>
+        </div>
+
+        <!-- Bottom Branding Watermark -->
+        <div class="mono-footer-brand">
+          <div class="mono-brand-copy">&copy; 2026 PK TECH WARRIOR</div>
+          <div class="mono-brand-tagline">BUILT TO CREATE. BORN TO WIN.</div>
+        </div>
       </div>
     </div>
   </section>
