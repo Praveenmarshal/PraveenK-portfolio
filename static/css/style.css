@@ -1497,55 +1497,6 @@ a{text-decoration:none;color:inherit}
   }
 }
 
-/* ── PREFERS-REDUCED-MOTION ACCESSIBILITY ── */
-@media(prefers-reduced-motion: reduce){
-  .mono-scroll-runway{
-    height:auto !important;
-  }
-  .mono-viewport{
-    position:relative !important;
-    height:auto !important;
-    display:flex !important;
-    flex-direction:column !important;
-    padding:80px 24px !important;
-  }
-  .mono-sidebar{
-    position:relative !important;
-    left:auto !important;
-    top:auto !important;
-    transform:none !important;
-    margin-bottom:40px !important;
-  }
-  .mono-3d-stage{
-    position:relative !important;
-    width:100% !important;
-    height:auto !important;
-    perspective:none !important;
-  }
-  .mono-axis, .mono-floor-ripples, .mono-ribbon-canvas, .mono-stars-canvas{
-    display:none !important;
-  }
-  .mono-spiral-scene{
-    position:relative !important;
-    left:auto !important;
-    top:auto !important;
-    width:100% !important;
-    height:auto !important;
-    display:grid !important;
-    grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)) !important;
-    gap:24px !important;
-    transform:none !important;
-  }
-  .mono-card{
-    position:relative !important;
-    top:auto !important;
-    left:auto !important;
-    width:100% !important;
-    margin:0 !important;
-    transform:none !important;
-    opacity:1 !important;
-    pointer-events:auto !important;
-  }
 }
 
 /* ══════════════════════════════════════════════════════════
