@@ -289,6 +289,162 @@ window.addEventListener('scroll', function() {
   requestAnimationFrame(renderHeroLoop);
 })();
 
+/* ── CINEMATIC 3D ABOUT SCENE ANIMATION & ORBITAL CANVAS ──── */
+(function initAboutSceneAnimation() {
+  var about = document.getElementById('about');
+  var canvas = document.querySelector('.about-orbit-canvas');
+  var decors = document.querySelectorAll('.about-decor-wrap');
+  if (!about) return;
+
+  // Mouse Parallax coordinates
+  var mouseX = 0, mouseY = 0;
+  var targetMouseX = 0, targetMouseY = 0;
+
+  window.addEventListener('mousemove', function(e) {
+    var rect = about.getBoundingClientRect();
+    if (e.clientY >= rect.top - 100 && e.clientY <= rect.bottom + 100) {
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetMouseX = (e.clientX - cx) / cx;
+      targetMouseY = (e.clientY - cy) / cy;
+    } else {
+      targetMouseX = 0;
+      targetMouseY = 0;
+    }
+  }, { passive: true });
+
+  // Canvas Setup (Orbits & Ambient Dust)
+  var ctx = canvas ? canvas.getContext('2d') : null;
+  var cw = 0, ch = 0;
+  var particles = [];
+
+  function resizeCanvas() {
+    if (!canvas || !ctx) return;
+    cw = canvas.width = about.offsetWidth;
+    ch = canvas.height = about.offsetHeight;
+
+    particles = [];
+    for (var i = 0; i < 28; i++) {
+      particles.push({
+        x: Math.random() * cw,
+        y: Math.random() * ch,
+        r: Math.random() * 1.4 + 0.4,
+        alpha: Math.random() * 0.4 + 0.12,
+        speedX: (Math.random() - 0.5) * 0.2,
+        speedY: (Math.random() - 0.5) * 0.2,
+        color: Math.random() > 0.4 ? '192, 132, 252' : '255, 255, 255'
+      });
+    }
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas, { passive: true });
+
+  var time = 0;
+  var isVisible = true;
+
+  var aboutObserver = new IntersectionObserver(function(entries) {
+    isVisible = entries[0].isIntersecting;
+  }, { threshold: 0.05 });
+  aboutObserver.observe(about);
+
+  function renderAboutLoop() {
+    if (!isVisible) {
+      requestAnimationFrame(renderAboutLoop);
+      return;
+    }
+
+    time += 0.012;
+
+    // Smooth LERP mouse coordinates
+    mouseX += (targetMouseX - mouseX) * 0.07;
+    mouseY += (targetMouseY - mouseY) * 0.07;
+
+    var isMob = window.innerWidth < 768;
+
+    // Shift 4 3D Floating Objects based on depth & mouse
+    decors.forEach(function(wrap) {
+      var depth = parseFloat(wrap.getAttribute('data-depth')) || 1.0;
+      var mx = mouseX * 22 * depth;
+      var my = mouseY * 18 * depth;
+      var breathe = Math.sin(time * 0.7 + depth * 2) * (isMob ? 4 : 8);
+
+      wrap.style.transform = 'translate3d(' + mx.toFixed(1) + 'px,' + (my + breathe).toFixed(1) + 'px,' + (depth * 20).toFixed(1) + 'px)';
+    });
+
+    // ── DRAW CANVAS: 3D Orbital Curves Around About Objects ──
+    if (ctx && cw > 0 && ch > 0) {
+      ctx.clearRect(0, 0, cw, ch);
+
+      var cx = cw * 0.5;
+      var cy = ch * 0.5;
+
+      // Draw subtle glowing ellipses framing the scene
+      if (!isMob) {
+        var rings = [
+          { rx: cw * 0.44, ry: ch * 0.38, rot: -0.12, nodeSpeed: 0.4 },
+          { rx: cw * 0.48, ry: ch * 0.42, rot: 0.15,  nodeSpeed: 0.3 }
+        ];
+
+        rings.forEach(function(ring, idx) {
+          ctx.save();
+          ctx.translate(cx + mouseX * 8, cy + mouseY * 6);
+          ctx.rotate(ring.rot);
+
+          // Soft outer glow
+          ctx.beginPath();
+          ctx.ellipse(0, 0, ring.rx, ring.ry, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(168, 85, 247, 0.08)';
+          ctx.lineWidth = 3.5;
+          ctx.stroke();
+
+          // Crisp neon line
+          ctx.beginPath();
+          ctx.ellipse(0, 0, ring.rx, ring.ry, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(192, 132, 252, 0.22)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Travelling Star Node
+          var nodeAngle = (time * ring.nodeSpeed + idx * 2.5) % (Math.PI * 2);
+          var nx = Math.cos(nodeAngle) * ring.rx;
+          var ny = Math.sin(nodeAngle) * ring.ry;
+
+          var grad = ctx.createRadialGradient(nx, ny, 0, nx, ny, 7);
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+          grad.addColorStop(0.3, 'rgba(192, 132, 252, 0.8)');
+          grad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(nx, ny, 7, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.restore();
+        });
+      }
+
+      // Draw Floating Ambient Dust Particles
+      for (var p = 0; p < particles.length; p++) {
+        var pt = particles[p];
+        pt.x += pt.speedX;
+        pt.y += pt.speedY;
+        if (pt.x < 0) pt.x = cw;
+        if (pt.x > cw) pt.x = 0;
+        if (pt.y < 0) pt.y = ch;
+        if (pt.y > ch) pt.y = 0;
+
+        ctx.fillStyle = 'rgba(' + pt.color + ',' + pt.alpha + ')';
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(renderAboutLoop);
+  }
+
+  requestAnimationFrame(renderAboutLoop);
+})();
+
 /* ── BIDIRECTIONAL SCROLL REVEAL (UP & DOWN) ──────────────── */
 (function initFadeIn() {
   const els = document.querySelectorAll('[data-fade]');
