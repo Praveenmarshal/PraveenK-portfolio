@@ -94,12 +94,12 @@ window.addEventListener('scroll', function() {
 
   // 6 Skills definitions matching reference positions
   var SKILLS = [
-    { key: 'sql',     label: 'SQL',      side: 'left',  targetX: -0.68, targetY: -0.58, phase: 0.0, speed: 0.4 },
-    { key: 'python',  label: 'PYTHON',   side: 'left',  targetX: -0.84, targetY: -0.02, phase: 1.2, speed: 0.35 },
-    { key: 'tableau', label: 'TABLEAU',  side: 'left',  targetX: -0.70, targetY: 0.54,  phase: 2.4, speed: 0.38 },
-    { key: 'excel',   label: 'EXCEL',    side: 'right', targetX: 0.68,  targetY: -0.58, phase: 3.6, speed: 0.4 },
-    { key: 'powerbi', label: 'POWER BI', side: 'right', targetX: 0.84,  targetY: -0.02, phase: 4.8, speed: 0.35 },
-    { key: 'apache',  label: 'APACHE',   side: 'right', targetX: 0.70,  targetY: 0.54,  phase: 6.0, speed: 0.38 }
+    { key: 'sql',     label: 'SQL',      side: 'left',  targetX: -0.78, targetY: -0.60, phase: 0.0, speed: 0.35 },
+    { key: 'python',  label: 'PYTHON',   side: 'left',  targetX: -0.92, targetY: -0.04, phase: 1.2, speed: 0.32 },
+    { key: 'tableau', label: 'TABLEAU',  side: 'left',  targetX: -0.80, targetY: 0.56,  phase: 2.4, speed: 0.35 },
+    { key: 'excel',   label: 'EXCEL',    side: 'right', targetX: 0.78,  targetY: -0.60, phase: 3.6, speed: 0.35 },
+    { key: 'powerbi', label: 'POWER BI', side: 'right', targetX: 0.92,  targetY: -0.04, phase: 4.8, speed: 0.32 },
+    { key: 'apache',  label: 'APACHE',   side: 'right', targetX: 0.80,  targetY: 0.56,  phase: 6.0, speed: 0.35 }
   ];
 
   var cardEls = {};
@@ -181,8 +181,8 @@ window.addEventListener('scroll', function() {
     var stageW = stageRect.width || 500;
     var stageH = stageRect.height || 500;
 
-    var rx = isMob ? Math.min(135, window.innerWidth * 0.38) : Math.min(270, stageW * 0.44);
-    var ry = isMob ? Math.min(145, stageH * 0.38) : Math.min(195, stageH * 0.38);
+    var rx = isMob ? Math.min(145, window.innerWidth * 0.40) : Math.min(310, Math.max(250, stageW * 0.48));
+    var ry = isMob ? Math.min(150, stageH * 0.39) : Math.min(230, Math.max(170, stageH * 0.41));
 
     // Parallax character shift
     if (charImg) {
