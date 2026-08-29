@@ -74,6 +74,221 @@ window.addEventListener('scroll', function() {
   });
 })();
 
+/* ── CINEMATIC 3D HERO CHARACTER & ORBITING SKILL SYSTEM ── */
+(function initHeroOrbitSystem() {
+  var hero = document.getElementById('hero');
+  var stage = document.querySelector('.hero-orbit-stage');
+  var cardsLayer = document.querySelector('.hero-orbit-cards-layer');
+  var charImg = document.querySelector('.hero-character-img');
+  var canvas = document.querySelector('.hero-orbit-canvas');
+  if (!hero || !stage) return;
+
+  var menuToggle = document.getElementById('heroMenuToggle');
+  var mobileNav = document.querySelector('.hero-mobile-nav-bar');
+  if (menuToggle && mobileNav) {
+    menuToggle.addEventListener('click', function() {
+      var isShown = mobileNav.style.display === 'flex';
+      mobileNav.style.display = isShown ? 'none' : 'flex';
+    });
+  }
+
+  // 6 Skills definitions matching reference positions
+  var SKILLS = [
+    { key: 'sql',     label: 'SQL',      side: 'left',  targetX: -0.68, targetY: -0.58, phase: 0.0, speed: 0.4 },
+    { key: 'python',  label: 'PYTHON',   side: 'left',  targetX: -0.84, targetY: -0.02, phase: 1.2, speed: 0.35 },
+    { key: 'tableau', label: 'TABLEAU',  side: 'left',  targetX: -0.70, targetY: 0.54,  phase: 2.4, speed: 0.38 },
+    { key: 'excel',   label: 'EXCEL',    side: 'right', targetX: 0.68,  targetY: -0.58, phase: 3.6, speed: 0.4 },
+    { key: 'powerbi', label: 'POWER BI', side: 'right', targetX: 0.84,  targetY: -0.02, phase: 4.8, speed: 0.35 },
+    { key: 'apache',  label: 'APACHE',   side: 'right', targetX: 0.70,  targetY: 0.54,  phase: 6.0, speed: 0.38 }
+  ];
+
+  var cardEls = {};
+  document.querySelectorAll('.hero-orbit-card').forEach(function(el) {
+    var k = el.getAttribute('data-skill');
+    if (k) cardEls[k] = el;
+  });
+
+  // Mouse Parallax coordinates
+  var mouseX = 0, mouseY = 0;
+  var targetMouseX = 0, targetMouseY = 0;
+  var isHovered = false;
+
+  window.addEventListener('mousemove', function(e) {
+    var rect = hero.getBoundingClientRect();
+    if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+      isHovered = true;
+      var cx = window.innerWidth / 2;
+      var cy = window.innerHeight / 2;
+      targetMouseX = (e.clientX - cx) / cx; // -1 .. 1
+      targetMouseY = (e.clientY - cy) / cy; // -1 .. 1
+    } else {
+      isHovered = false;
+      targetMouseX = 0;
+      targetMouseY = 0;
+    }
+  }, { passive: true });
+
+  // Canvas Setup (Orbits & Particles)
+  var ctx = canvas ? canvas.getContext('2d') : null;
+  var cw = 0, ch = 0;
+  var particles = [];
+
+  function resizeCanvas() {
+    if (!canvas || !ctx) return;
+    cw = canvas.width = hero.offsetWidth;
+    ch = canvas.height = hero.offsetHeight;
+
+    // Create 35 subtle purple/white floating dust particles
+    particles = [];
+    for (var i = 0; i < 35; i++) {
+      particles.push({
+        x: Math.random() * cw,
+        y: Math.random() * ch,
+        r: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.45 + 0.15,
+        speedX: (Math.random() - 0.5) * 0.25,
+        speedY: (Math.random() - 0.5) * 0.25,
+        color: Math.random() > 0.4 ? '192, 132, 252' : '255, 255, 255'
+      });
+    }
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas, { passive: true });
+
+  // Active Loop & Time
+  var time = 0;
+  var isVisible = true;
+
+  var heroObserver = new IntersectionObserver(function(entries) {
+    isVisible = entries[0].isIntersecting;
+  }, { threshold: 0.05 });
+  heroObserver.observe(hero);
+
+  function renderHeroLoop() {
+    if (!isVisible) {
+      requestAnimationFrame(renderHeroLoop);
+      return;
+    }
+
+    time += 0.015;
+
+    // Smooth LERP mouse coordinates
+    mouseX += (targetMouseX - mouseX) * 0.06;
+    mouseY += (targetMouseY - mouseY) * 0.06;
+
+    var isMob = window.innerWidth < 768;
+    var stageRect = stage.getBoundingClientRect();
+    var stageW = stageRect.width || 500;
+    var stageH = stageRect.height || 500;
+
+    var rx = isMob ? Math.min(135, window.innerWidth * 0.38) : Math.min(270, stageW * 0.44);
+    var ry = isMob ? Math.min(145, stageH * 0.38) : Math.min(195, stageH * 0.38);
+
+    // Parallax character shift
+    if (charImg) {
+      var charShiftX = mouseX * 10;
+      var charShiftY = mouseY * 8;
+      var charBreathe = Math.sin(time * 0.8) * 3;
+      charImg.style.transform = 'translate3d(' + charShiftX.toFixed(1) + 'px,' + (charShiftY + charBreathe).toFixed(1) + 'px,0px)';
+    }
+
+    // Update 6 Skill Orbit Cards
+    SKILLS.forEach(function(s) {
+      var el = cardEls[s.key];
+      if (!el) return;
+
+      var orbitAngle = time * s.speed + s.phase;
+      // Elliptical harmonic wobble + anchor position
+      var wobbleX = Math.cos(orbitAngle) * (isMob ? 8 : 14);
+      var wobbleY = Math.sin(orbitAngle) * (isMob ? 10 : 16);
+      var wobbleZ = Math.sin(orbitAngle * 0.8);
+
+      var px = s.targetX * rx + wobbleX + mouseX * (s.side === 'left' ? 14 : -14);
+      var py = s.targetY * ry + wobbleY + mouseY * 12;
+      var scale = (0.96 + (wobbleZ + 1) * 0.04).toFixed(3);
+      var opacity = (0.88 + (wobbleZ + 1) * 0.06).toFixed(2);
+      var tilt = (Math.sin(orbitAngle) * 3).toFixed(1);
+
+      el.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0px) scale(' + scale + ') rotate(' + tilt + 'deg)';
+      el.style.opacity = opacity;
+      el.style.zIndex = wobbleZ > 0 ? 12 : 4;
+    });
+
+    // ── DRAW CANVAS: Glowing 3D Orbital Curves & Travelling Star Particles ──
+    if (ctx && cw > 0 && ch > 0) {
+      ctx.clearRect(0, 0, cw, ch);
+
+      // Character center anchor in canvas coordinates
+      var charRect = stage.getBoundingClientRect();
+      var heroRect = hero.getBoundingClientRect();
+      var centerX = charRect.left - heroRect.left + charRect.width / 2 + mouseX * 8;
+      var centerY = charRect.top - heroRect.top + charRect.height * 0.52 + mouseY * 6;
+
+      // Draw 3 Elliptical Orbit Rings
+      var ringRadii = isMob
+        ? [{ rx: rx * 1.05, ry: ry * 0.45, rot: -0.15 }, { rx: rx * 1.25, ry: ry * 0.72, rot: 0.12 }]
+        : [{ rx: rx * 1.08, ry: ry * 0.52, rot: -0.20 }, { rx: rx * 1.28, ry: ry * 0.78, rot: 0.16 }, { rx: rx * 0.85, ry: ry * 0.95, rot: 0.35 }];
+
+      ringRadii.forEach(function(ring, idx) {
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(ring.rot);
+
+        // Soft outer glow ring
+        ctx.beginPath();
+        ctx.ellipse(0, 0, ring.rx, ring.ry, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(168, 85, 247, 0.10)';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Crisp inner neon ring
+        ctx.beginPath();
+        ctx.ellipse(0, 0, ring.rx, ring.ry, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(192, 132, 252, 0.28)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Travelling glowing node on each ring
+        var nodeAngle = (time * (0.6 + idx * 0.25) + idx * 2.1) % (Math.PI * 2);
+        var nx = Math.cos(nodeAngle) * ring.rx;
+        var ny = Math.sin(nodeAngle) * ring.ry;
+
+        // Node Glow
+        var radGrad = ctx.createRadialGradient(nx, ny, 0, nx, ny, 8);
+        radGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        radGrad.addColorStop(0.3, 'rgba(192, 132, 252, 0.9)');
+        radGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+        ctx.fillStyle = radGrad;
+        ctx.beginPath();
+        ctx.arc(nx, ny, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      });
+
+      // Draw Floating Ambient Dust Particles
+      for (var p = 0; p < particles.length; p++) {
+        var pt = particles[p];
+        pt.x += pt.speedX;
+        pt.y += pt.speedY;
+        if (pt.x < 0) pt.x = cw;
+        if (pt.x > cw) pt.x = 0;
+        if (pt.y < 0) pt.y = ch;
+        if (pt.y > ch) pt.y = 0;
+
+        ctx.fillStyle = 'rgba(' + pt.color + ',' + pt.alpha + ')';
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(renderHeroLoop);
+  }
+
+  requestAnimationFrame(renderHeroLoop);
+})();
+
 /* ── BIDIRECTIONAL SCROLL REVEAL (UP & DOWN) ──────────────── */
 (function initFadeIn() {
   const els = document.querySelectorAll('[data-fade]');

@@ -106,31 +106,195 @@
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
-<!-- ═══════════════ HERO SECTION ═══════════════ -->
+<!-- ═══════════════ HERO SECTION (Cinematic 3D Character & Orbit System) ═══════════════ -->
 <section id="hero" class="hero-section">
-  <nav class="hero-nav" data-fade data-fade-delay="0" data-fade-y="-20">
-    <a href="#about">About</a>
-    <a href="#skills">Skills</a>
-    <a href="#projects">Projects</a>
-    <a href="#contact">Contact</a>
+  <!-- Subtle Ambient Glow & Particle / Orbit Canvas -->
+  <div class="hero-ambient-purple-glow" aria-hidden="true"></div>
+  <canvas class="hero-orbit-canvas" aria-hidden="true"></canvas>
+
+  <!-- TOP NAVBAR -->
+  <header class="hero-nav-bar">
+    <!-- Brand Logo -->
+    <a href="#hero" class="hero-brand">
+      <div class="hero-brand-badge">PK</div>
+      <div class="hero-brand-text">
+        <span class="brand-top">PK TECH</span>
+        <span class="brand-bot">WARRIOR</span>
+      </div>
+    </a>
+
+    <!-- Center Nav Links -->
+    <nav class="hero-nav-links" id="heroNavLinks">
+      <a href="#about" class="hero-nav-item">ABOUT</a>
+      <a href="#skills" class="hero-nav-item active">
+        <span>SKILLS</span>
+        <span class="nav-active-indicator"><span class="nav-indicator-dot"></span></span>
+      </a>
+      <a href="#projects" class="hero-nav-item">PROJECTS</a>
+      <a href="#contact" class="hero-nav-item">CONTACT</a>
+    </nav>
+
+    <!-- Right Contact Button / Mobile Menu Toggle -->
+    <div class="hero-nav-right">
+      <a href="#contact" class="hero-pill-cta desktop-header-cta">
+        <span class="pill-cta-text">CONTACT ME</span>
+        <div class="pill-cta-bubble">
+          <svg class="pill-chat-svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+          </svg>
+          <span class="pill-online-dot"></span>
+        </div>
+      </a>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button class="hero-menu-toggle" id="heroMenuToggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Sub-Nav Row (Visible on mobile below header) -->
+  <nav class="hero-mobile-nav-bar">
+    <a href="#about" class="hero-mob-item">ABOUT</a>
+    <a href="#skills" class="hero-mob-item active">
+      <span>SKILLS</span>
+      <span class="mob-indicator-bar"><span class="mob-indicator-glow"></span></span>
+    </a>
+    <a href="#projects" class="hero-mob-item">PROJECTS</a>
+    <a href="#contact" class="hero-mob-item">CONTACT</a>
   </nav>
 
-  <div class="hero-heading-wrap" data-fade data-fade-delay="0.15" data-fade-y="40">
-    <h1 class="hero-heading">HI, I&apos;M PRAVEEN</h1>
-  </div>
+  <!-- HERO MAIN 2-COLUMN / STACKED STAGE -->
+  <div class="hero-stage">
+    <!-- LEFT CONTENT: Typography & Tagline -->
+    <div class="hero-left-col">
+      <div class="hero-title-group">
+        <h1 class="hero-main-title">
+          <span class="title-line-1">HI, I'M</span>
+          <span class="title-line-2">PRAVEEN</span>
+        </h1>
+      </div>
 
-  <div class="hero-portrait-wrap">
-    <div class="portrait-magnet" data-magnet data-magnet-padding="150" data-magnet-strength="3">
-      <div class="portrait-avatar" data-fade data-fade-delay="0.6" data-fade-y="30">
-        <img src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png" alt="Praveen Portrait" loading="eager">
+      <div class="hero-desc-group">
+        <p class="hero-stacked-desc">
+          <span>A DATA ANALYST DRIVEN</span>
+          <span>BY CRAFTING ACTIONABLE</span>
+          <span>INSIGHTS AND</span>
+          <span>UNFORGETTABLE</span>
+          <span>DASHBOARDS</span>
+        </p>
+      </div>
+
+      <!-- Desktop Contact Me CTA -->
+      <div class="hero-desktop-cta-wrap">
+        <a href="#contact" class="hero-pill-cta hero-main-cta">
+          <span class="pill-cta-text">CONTACT ME</span>
+          <div class="pill-cta-bubble">
+            <svg class="pill-chat-svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            </svg>
+            <span class="pill-online-dot"></span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- RIGHT/CENTER: 3D Character & Orbiting Neon Skills System -->
+    <div class="hero-orbit-stage">
+      <!-- 3D Character Graphic with Purple Rim Lighting -->
+      <div class="hero-character-container">
+        <div class="hero-character-glow" aria-hidden="true"></div>
+        <img src="{{ url_for('static', filename='images/hero-character-desktop.jpg') }}" alt="Praveen 3D Character" class="hero-character-img" loading="eager">
+      </div>
+
+      <!-- 6 Floating Glass Orbit Skill Cards -->
+      <div class="hero-orbit-cards-layer">
+        <!-- 01: SQL -->
+        <div class="hero-orbit-card orbit-card-sql" data-skill="sql">
+          <span class="orbit-card-label">SQL</span>
+          <div class="orbit-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 02: PYTHON -->
+        <div class="hero-orbit-card orbit-card-python" data-skill="python">
+          <span class="orbit-card-label">PYTHON</span>
+          <div class="orbit-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14.25 2.5C10.5 2.5 10 4.1 10 5.6v1.9h4.5V9h-6.2c-1.8 0-3.3 1.1-3.3 3.3 0 2.2 1.3 3.3 3.3 3.3H10v-1.7c0-1.8 1.4-3.3 3.3-3.3h3.5c1.4 0 2.5-1.1 2.5-2.5V5.6c0-1.5-1.3-3.1-5.1-3.1zm-2.1 1.7a.8.8 0 1 1 0 1.6.8.8 0 0 1 0-1.6zm-2.4 17.3c3.8 0 4.2-1.6 4.2-3.1v-1.9H9.5V15h6.2c1.8 0 3.3-1.1 3.3-3.3 0-2.2-1.3-3.3-3.3-3.3H14v1.7c0 1.8-1.4 3.3-3.3 3.3H7.2c-1.4 0-2.5 1.1-2.5 2.5v2.5c0 1.5 1.3 3.1 5.1 3.1zm2.1-1.7a.8.8 0 1 1 0-1.6.8.8 0 0 1 0 1.6z"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 03: TABLEAU -->
+        <div class="hero-orbit-card orbit-card-tableau" data-skill="tableau">
+          <span class="orbit-card-label">TABLEAU</span>
+          <div class="orbit-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.5 2h1v4h-1zM11.5 18h1v4h-1zM2 11.5h4v1H2zM18 11.5h4v1h-4zM6.5 6.5h1.5v1.5H6.5zM16 6.5h1.5v1.5H16zM6.5 16h1.5v1.5H6.5zM16 16h1.5v1.5H16zM10.5 7h3v10h-3zM7 10.5h10v3H7z"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 04: EXCEL -->
+        <div class="hero-orbit-card orbit-card-excel" data-skill="excel">
+          <span class="orbit-card-label">EXCEL</span>
+          <div class="orbit-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.2 13.5l-1.8-3.1-1.8 3.1H5.4l2.8-4.5-2.6-4.5h1.9l1.7 3 1.7-3h1.8l-2.6 4.5 2.8 4.5h-1.9zM18 16.5h-4v-1.5h4v1.5zm0-3h-4V12h4v1.5zm0-3h-4V9h4v1.5z"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 05: POWER BI -->
+        <div class="hero-orbit-card orbit-card-powerbi" data-skill="powerbi">
+          <span class="orbit-card-label">POWER BI</span>
+          <div class="orbit-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3" y="13" width="4" height="8" rx="1"/>
+              <rect x="9.5" y="8" width="4" height="13" rx="1"/>
+              <rect x="16" y="3" width="4" height="18" rx="1"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 06: APACHE -->
+        <div class="hero-orbit-card orbit-card-apache" data-skill="apache">
+          <span class="orbit-card-label">APACHE</span>
+          <div class="orbit-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.2 3.8C18.5 2.1 14.5 3 11 6.5c-3 3-5.5 7.2-6.5 10.5-.3 1-.1 1.6.4 2 .4.3 1 .4 1.8.1 3.2-1.2 7.2-3.8 10-6.8 3.5-3.5 4.5-7.5 3.5-8.5zm-3.2 5.5l-4.5 4.5c-.3.3-.8.3-1.1 0s-.3-.8 0-1.1l4.5-4.5c.3-.3.8-.3 1.1 0s.3.8 0 1.1z"/>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="hero-bottom">
-    <p class="hero-tagline" data-fade data-fade-delay="0.35" data-fade-y="20">a data analyst driven by crafting actionable insights and unforgettable dashboards</p>
-    <div data-fade data-fade-delay="0.5" data-fade-y="20">
-      <a href="#contact" class="contact-btn">Contact Me</a>
+  <!-- Mobile Bottom CTA & Scroll Explorer Indicator -->
+  <div class="hero-mobile-bottom-wrap">
+    <a href="#contact" class="hero-pill-cta hero-mobile-cta">
+      <span class="pill-cta-text">CONTACT ME</span>
+      <div class="pill-cta-bubble">
+        <svg class="pill-chat-svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+        </svg>
+        <span class="pill-online-dot"></span>
+      </div>
+    </a>
+
+    <div class="hero-scroll-indicator">
+      <div class="hero-mouse-icon">
+        <span class="hero-mouse-wheel"></span>
+      </div>
+      <span class="hero-scroll-text">SCROLL TO EXPLORE</span>
     </div>
   </div>
 </section>
