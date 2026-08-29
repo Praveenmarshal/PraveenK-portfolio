@@ -543,66 +543,56 @@ window.addEventListener('scroll', function() {
     cards.push(c);
   });
 
-  /* ── Background Star / Particle Field ── */
+  /* ── Background Star / Particle Field (Zero per-frame overhead) ── */
   (function initStarfield() {
     if (!starsCanvas) return;
     var ctx = starsCanvas.getContext('2d');
-    var stars = [];
-    var count = 55;
+    if (!ctx) return;
 
-    function resizeStars() {
+    function drawStaticStars() {
       starsCanvas.width = starsCanvas.offsetWidth;
       starsCanvas.height = starsCanvas.offsetHeight;
-      stars = [];
-      for (var i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * starsCanvas.width,
-          y: Math.random() * starsCanvas.height,
-          r: Math.random() * 1.2 + 0.4,
-          a: Math.random() * 0.45 + 0.1,
-          speed: Math.random() * 0.02 + 0.005,
-          phase: Math.random() * Math.PI * 2
-        });
-      }
-    }
-
-    function drawStars() {
-      if (!ctx) return;
       ctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
-      var time = Date.now() * 0.001;
-      for (var i = 0; i < stars.length; i++) {
-        var s = stars[i];
-        var alpha = s.a + Math.sin(time + s.phase) * 0.18;
-        if (alpha < 0.05) alpha = 0.05;
-        ctx.fillStyle = 'rgba(255,255,255,' + alpha.toFixed(2) + ')';
+      var count = Math.min(60, Math.floor(starsCanvas.width * 0.04));
+      for (var i = 0; i < count; i++) {
+        var x = Math.random() * starsCanvas.width;
+        var y = Math.random() * starsCanvas.height;
+        var r = Math.random() * 1.2 + 0.4;
+        var a = Math.random() * 0.4 + 0.15;
+        ctx.fillStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')';
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
       }
-      requestAnimationFrame(drawStars);
     }
 
-    resizeStars();
-    drawStars();
-    window.addEventListener('resize', resizeStars, { passive: true });
+    drawStaticStars();
+    window.addEventListener('resize', drawStaticStars, { passive: true });
   })();
 
-  /* ── 3D Glowing Spiral Ribbon Canvas ── */
+  /* ── 3D Glowing Spiral Ribbon Canvas (High-Performance 120fps) ── */
   var ribbonCtx = ribbonCanvas ? ribbonCanvas.getContext('2d') : null;
-  function renderRibbon(rotDeg) {
-    if (!ribbonCtx || !ribbonCanvas) return;
-    var w = ribbonCanvas.width = ribbonCanvas.offsetWidth;
-    var h = ribbonCanvas.height = ribbonCanvas.offsetHeight;
-    if (w <= 0 || h <= 0) return;
+  var ribbonW = 0;
+  var ribbonH = 0;
 
-    ribbonCtx.clearRect(0, 0, w, h);
+  function resizeRibbon() {
+    if (!ribbonCanvas) return;
+    ribbonW = ribbonCanvas.width = ribbonCanvas.offsetWidth;
+    ribbonH = ribbonCanvas.height = ribbonCanvas.offsetHeight;
+  }
+  resizeRibbon();
+
+  function renderRibbon(rotDeg) {
+    if (!ribbonCtx || ribbonW <= 0 || ribbonH <= 0) return;
+
+    ribbonCtx.clearRect(0, 0, ribbonW, ribbonH);
 
     // Axis center point
-    var cx = window.innerWidth <= 767 ? w * 0.5 : (window.innerWidth <= 1024 ? w * 0.68 : w * 0.63);
-    var cy = window.innerHeight * 0.5;
+    var cx = window.innerWidth <= 767 ? ribbonW * 0.5 : (window.innerWidth <= 1024 ? ribbonW * 0.68 : ribbonW * 0.63);
+    var cy = ribbonH * 0.5;
     var ribbonR = R * 0.85;
     var totalTurns = 2.8;
-    var steps = 140;
+    var steps = 80;
 
     var rotRad = rotDeg * Math.PI / 180;
     var points = [];
@@ -612,19 +602,18 @@ window.addEventListener('scroll', function() {
       var theta = (t * totalTurns * Math.PI * 2) - rotRad;
       var x3 = Math.sin(theta) * ribbonR;
       var z3 = Math.cos(theta) * ribbonR;
-      // Vertical span from top to bottom
-      var y3 = (t - 0.5) * (h * 0.68);
+      var y3 = (t - 0.5) * (ribbonH * 0.68);
 
       var dist = PERSP - z3;
       var sc = PERSP / Math.max(100, dist);
       var px = cx + x3 * sc;
       var py = cy + y3 * sc;
-      var depth = (Math.cos(theta) + 1) * 0.5; // 1 = front, 0 = back
+      var depth = (Math.cos(theta) + 1) * 0.5;
 
       points.push({ x: px, y: py, depth: depth, z: z3 });
     }
 
-    // Draw back segments (behind axis)
+    // 1. Draw back segments (behind vertical axis)
     ribbonCtx.beginPath();
     for (var i = 0; i < points.length - 1; i++) {
       var p1 = points[i];
@@ -638,23 +627,33 @@ window.addEventListener('scroll', function() {
     ribbonCtx.lineWidth = 1.5;
     ribbonCtx.stroke();
 
-    // Draw front segments (in front of axis with glowing white bloom)
+    // 2. Draw front segments outer soft glow
+    ribbonCtx.beginPath();
+    for (var g = 0; g < points.length - 1; g++) {
+      var gp1 = points[g];
+      var gp2 = points[g + 1];
+      if (gp1.z > 0 && gp2.z > 0) {
+        ribbonCtx.moveTo(gp1.x, gp1.y);
+        ribbonCtx.lineTo(gp2.x, gp2.y);
+      }
+    }
+    ribbonCtx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ribbonCtx.lineWidth = 6;
+    ribbonCtx.stroke();
+
+    // 3. Draw front segments crisp core
+    ribbonCtx.beginPath();
     for (var j = 0; j < points.length - 1; j++) {
       var pt1 = points[j];
       var pt2 = points[j + 1];
       if (pt1.z > 0 && pt2.z > 0) {
-        var dAvg = (pt1.depth + pt2.depth) * 0.5;
-        ribbonCtx.beginPath();
         ribbonCtx.moveTo(pt1.x, pt1.y);
         ribbonCtx.lineTo(pt2.x, pt2.y);
-        ribbonCtx.strokeStyle = 'rgba(255,255,255,' + (0.35 + dAvg * 0.6).toFixed(2) + ')';
-        ribbonCtx.lineWidth = 2 + dAvg * 1.5;
-        ribbonCtx.shadowColor = 'rgba(255,255,255,0.8)';
-        ribbonCtx.shadowBlur = 12 * dAvg;
-        ribbonCtx.stroke();
-        ribbonCtx.shadowBlur = 0;
       }
     }
+    ribbonCtx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ribbonCtx.lineWidth = 2.2;
+    ribbonCtx.stroke();
   }
 
   /* ── Scroll progress 0..1 ── */
@@ -665,7 +664,7 @@ window.addEventListener('scroll', function() {
     return Math.max(0, Math.min(1, -rect.top / range));
   }
 
-  /* ── Main Animation Tick ── */
+  /* ── Main Animation Tick (Optimized 60/120fps LERP) ── */
   function tick() {
     currentRot += (targetRot - currentRot) * LERP;
     var p = currentRot / FULL_ROT;
@@ -710,7 +709,7 @@ window.addEventListener('scroll', function() {
       }
     }
 
-    if (Math.abs(targetRot - currentRot) > 0.005) {
+    if (Math.abs(targetRot - currentRot) > 0.001) {
       rafId = requestAnimationFrame(tick);
     } else {
       currentRot = targetRot;
@@ -727,6 +726,7 @@ window.addEventListener('scroll', function() {
   window.addEventListener('resize', function() {
     R  = getRadius();
     VS = getVSpread();
+    resizeRibbon();
     onScroll();
   }, { passive: true });
 

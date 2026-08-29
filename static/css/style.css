@@ -1200,33 +1200,27 @@ a{text-decoration:none;color:inherit}
   pointer-events:none;
   text-shadow:0 0 20px rgba(0,0,0,0.8);
 }
-.mono-card.active .mono-card-num-float{
-  color:rgba(255,255,255,0.45);
-  text-shadow:0 0 25px rgba(255,255,255,0.2);
-}
-
 .mono-card-inner{
   display:flex;
   width:100%;
   height:200px;
-  background:rgba(8, 8, 12, 0.88);
-  backdrop-filter:blur(24px) saturate(1.1);
-  -webkit-backdrop-filter:blur(24px) saturate(1.1);
+  background:#0B0B10;
+  background:linear-gradient(135deg, rgba(16,16,22,0.96) 0%, rgba(8,8,12,0.98) 100%);
   border:1px solid rgba(255, 255, 255, 0.12);
   border-radius:18px;
   overflow:hidden;
   box-shadow:
-    0 20px 45px rgba(0,0,0,0.9),
+    0 16px 40px rgba(0,0,0,0.85),
     inset 0 1px 0 rgba(255,255,255,0.12);
-  transition:border-color .3s ease, box-shadow .3s ease, transform .3s ease;
+  transition:border-color .25s ease, box-shadow .25s ease, transform .25s ease;
   pointer-events:auto;
 }
 
 .mono-card.active .mono-card-inner{
-  border-color:rgba(255,255,255,0.38);
+  border-color:rgba(255,255,255,0.4);
   box-shadow:
-    0 24px 60px rgba(0,0,0,0.95),
-    0 0 35px rgba(255,255,255,0.12),
+    0 22px 55px rgba(0,0,0,0.95),
+    0 0 30px rgba(255,255,255,0.12),
     inset 0 1px 0 rgba(255,255,255,0.25);
 }
 
