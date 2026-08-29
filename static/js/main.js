@@ -496,24 +496,34 @@ window.addEventListener('scroll', function() {
   var TOTAL = PROJECTS.length;
   var ANGLE_STEP = 360 / TOTAL; // 45 deg between cards
   var FULL_ROT   = 720;         // 2 full turns
-  var PERSP      = 1300;        // perspective depth
   var LERP       = 0.085;       // responsiveness
   var currentRot = 0;
   var targetRot  = 0;
   var rafId      = 0;
   var cards      = [];
 
-  function getRadius()  {
-    if (window.innerWidth <= 767) return Math.min(window.innerWidth * 0.38, 200);
-    if (window.innerWidth <= 1024) return Math.min(window.innerWidth * 0.3, 340);
-    return Math.min(window.innerWidth * 0.28, 440);
+  function isMobile() { return window.innerWidth < 768; }
+  function isTablet() { return window.innerWidth >= 768 && window.innerWidth < 1024; }
+
+  function getRadius() {
+    if (isMobile()) return Math.min(window.innerWidth * 0.16, 65);
+    if (isTablet()) return Math.min(window.innerWidth * 0.25, 260);
+    return Math.min(window.innerWidth * 0.28, 420);
   }
+
   function getVSpread() {
-    if (window.innerWidth <= 767) return 26;
-    return 42;
+    if (isMobile()) return 145;
+    if (isTablet()) return 44;
+    return 50;
   }
-  var R  = getRadius();
-  var VS = getVSpread();
+
+  function getPerspective() {
+    return isMobile() ? 1000 : 1300;
+  }
+
+  var R     = getRadius();
+  var VS    = getVSpread();
+  var PERSP = getPerspective();
 
   /* ── Build Card Elements ── */
   function makeCard(d) {
@@ -588,11 +598,11 @@ window.addEventListener('scroll', function() {
     ribbonCtx.clearRect(0, 0, ribbonW, ribbonH);
 
     // Axis center point
-    var cx = window.innerWidth <= 767 ? ribbonW * 0.5 : (window.innerWidth <= 1024 ? ribbonW * 0.68 : ribbonW * 0.63);
+    var cx = isMobile() ? ribbonW * 0.5 : (isTablet() ? ribbonW * 0.66 : ribbonW * 0.63);
     var cy = ribbonH * 0.5;
-    var ribbonR = R * 0.85;
-    var totalTurns = 2.8;
-    var steps = 80;
+    var ribbonR = isMobile() ? Math.max(80, R * 1.4) : R * 0.85;
+    var totalTurns = isMobile() ? 4.2 : 2.8;
+    var steps = 90;
 
     var rotRad = rotDeg * Math.PI / 180;
     var points = [];
@@ -602,7 +612,7 @@ window.addEventListener('scroll', function() {
       var theta = (t * totalTurns * Math.PI * 2) - rotRad;
       var x3 = Math.sin(theta) * ribbonR;
       var z3 = Math.cos(theta) * ribbonR;
-      var y3 = (t - 0.5) * (ribbonH * 0.68);
+      var y3 = (t - 0.5) * (ribbonH * 0.74);
 
       var dist = PERSP - z3;
       var sc = PERSP / Math.max(100, dist);
@@ -677,6 +687,8 @@ window.addEventListener('scroll', function() {
     // Render 3D glowing spiral ribbon
     renderRibbon(currentRot);
 
+    var mobile = isMobile();
+
     // Update 3D cards
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
@@ -685,7 +697,16 @@ window.addEventListener('scroll', function() {
 
       var x = Math.sin(rad) * R;
       var z = Math.cos(rad) * R;
-      var y = (i - (TOTAL - 1) / 2) * VS * 0.5 + Math.sin(rad) * 20;
+      
+      var y = 0;
+      if (mobile) {
+        // Mobile vertical scroll progression
+        var cardOffset = i - (currentRot / ANGLE_STEP);
+        y = cardOffset * VS + Math.sin(rad) * 12;
+      } else {
+        // Desktop cylindrical orbital spread
+        y = (i - (TOTAL - 1) / 2) * VS * 0.5 + Math.sin(rad) * 20;
+      }
 
       var dist = PERSP - z;
       var scale = PERSP / Math.max(120, dist);
@@ -694,7 +715,7 @@ window.addEventListener('scroll', function() {
 
       var depth = (Math.cos(rad) + 1) * 0.5; // 0 = back, 1 = front
       var opacity = 0.18 + depth * 0.82;
-      var tilt = Math.sin(rad) * 3;
+      var tilt = Math.sin(rad) * (mobile ? 2 : 3);
       var cardScale = (scale * (0.75 + depth * 0.3)).toFixed(3);
 
       c.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0px) scale(' + cardScale + ') rotate(' + tilt.toFixed(1) + 'deg)';
@@ -724,8 +745,9 @@ window.addEventListener('scroll', function() {
 
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', function() {
-    R  = getRadius();
-    VS = getVSpread();
+    R     = getRadius();
+    VS    = getVSpread();
+    PERSP = getPerspective();
     resizeRibbon();
     onScroll();
   }, { passive: true });
